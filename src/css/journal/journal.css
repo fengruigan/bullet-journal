@@ -28,6 +28,13 @@
 	}
 }
 
+@media (min-width: 1440px) {
+	.journal {
+		width: 50%;
+		height: 40rem;
+	}
+}
+
 @media (max-width: 991px) {
 	.date {
 		font-size: 1rem;
