@@ -1,10 +1,14 @@
+@import "~antd/dist/antd.css";
 body,
 html {
 	height: 100%;
 	width: 100%;
 }
+a {
+	color: black;
+}
 
-body {
+/* body {
 	background: rgb(133, 51, 255);
 	background: -moz-linear-gradient(
 		90deg,
@@ -22,18 +26,45 @@ body {
 		rgba(189, 44, 255, 1) 65%
 	);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8533ff",endColorstr="#bd2cff",GradientType=1);
+} */
+
+.icons {
+	font-size: 3em;
+}
+.header {
+	background-color: white;
+	padding: 0;
 }
 
-.brand-logo {
+#brand-logo a {
+	color: black;
+}
+
+#brand-logo {
 	font-family: "Dancing Script", cursive;
 	font-weight: 700;
 	margin-left: 2rem;
+	font-size: 2rem;
+	color: black;
+}
+
+@media (min-width: 991px) {
+	.nav-collapse {
+		display: none;
+	}
+	.nav-norm {
+		display: block;
+	}
 }
 
 @media (max-width: 991px) {
-	nav .brand-logo {
-		left: 0;
-		transform: translateX(0);
+	#brand-logo {
 		font-size: 1.7rem;
+	}
+	.nav-norm {
+		display: none;
+	}
+	.nav-collapse {
+		display: block;
 	}
 }
