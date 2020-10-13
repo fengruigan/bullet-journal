@@ -1,0 +1,33 @@
+body,
+html {
+    height: 100%;
+}
+a {
+    color: black;
+}
+#calendar-main {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    height: 35rem;
+    font-size: 2rem;
+    text-align: center;
+}
+#calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    height: 2rem;
+}
+.day.selected {
+    background-color: rgb(0, 127, 255);
+}
+.header {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    color: red;
+}
+.day {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
