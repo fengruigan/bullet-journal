@@ -31,13 +31,16 @@ a {
 .icons {
 	font-size: 3em;
 }
-.header {
+.nav {
 	background-color: white;
 	padding: 0;
 }
-
+.sidebar {
+	color: white;
+}
 #brand-logo a {
 	color: black;
+	/* color: white; */
 }
 
 #brand-logo {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CreateTask from "./createTask";
+// import CreateTask from "./createTask";
 import Todo from "./todo";
 // import getDate from "../../util/getDate";
 import "../../css/journal/journal.css";
@@ -23,7 +23,7 @@ class Page extends Component {
 					<Todo />
 					<Todo />
 					<Todo />
-					<CreateTask />
+					{/* <CreateTask /> */}
 				</div>
 				<div className="divider"></div>
 				<div className="general-list">

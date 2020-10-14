@@ -79,7 +79,7 @@ class Navbar extends Component {
 		let menu = (
 			<Dropdown overlay={menuItem}>
 				<a
-					href
+					href={"/#"}
 					className="ant-dropdown-link"
 					onClick={(e) => e.preventDefault()}
 					style={{ float: "right", marginRight: "1rem" }}
@@ -94,7 +94,7 @@ class Navbar extends Component {
 	getClass() {
 		// console.log(this.props.collapsed);
 		let col = this.props.collapsed ? "collapse" : "norm";
-		return "header nav-" + col;
+		return "nav nav-" + col;
 	}
 
 	render() {

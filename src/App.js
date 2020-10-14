@@ -1,10 +1,13 @@
 import React from "react";
 import Navbar from "./components/navbar";
-import { Layout } from "antd";
-import { BrowserRouter as Router } from "react-router-dom";
+import Sidebar from "./components/sidebar";
+import Journal from "./components/journal/journal";
+// import Calendar from "./components/calendar/calendar";
+import { Layout, Calendar } from "antd";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./css/App.css";
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 
 function App() {
 	return (
@@ -13,8 +16,17 @@ function App() {
 				<Navbar collapsed={false} />
 				<Navbar collapsed={true} />
 				<Layout>
-					<Sider>Sider</Sider>
-					<Content>Content</Content>
+					<Sidebar />
+					<Content>
+						<Switch>
+							<Route path="/calendar">
+								<Calendar />
+							</Route>
+							<Route path="/" component={Journal} />
+							{/* <Route path="/calendar" component={Calendar} />
+							<Route path="/" component={Journal} /> */}
+						</Switch>
+					</Content>
 				</Layout>
 			</Layout>
 		</Router>
