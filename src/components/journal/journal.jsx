@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import CreateTask from "./createTask";
+// import CreateTask from "./createTask";
 import Todo from "./todo";
-// import getDate from "../../getDate";
+// import getDate from "../../util/getDate";
 import "../../css/journal/journal.css";
 
 class Page extends Component {
 	state = {};
 	componentDidMount() {
-		console.log(this.props);
+		// console.log(this.props);
 		// if (Object.keys(this.props.match.params).length === 0) {
 		// 	console.log("at home");
 		// }
@@ -23,7 +23,7 @@ class Page extends Component {
 					<Todo />
 					<Todo />
 					<Todo />
-					<CreateTask />
+					{/* <CreateTask /> */}
 				</div>
 				<div className="divider"></div>
 				<div className="general-list">
