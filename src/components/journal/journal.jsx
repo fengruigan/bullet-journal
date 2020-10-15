@@ -7,7 +7,7 @@ import "../../css/journal/journal.css";
 class Page extends Component {
 	state = {};
 	componentDidMount() {
-		console.log(this.props);
+		// console.log(this.props);
 		// if (Object.keys(this.props.match.params).length === 0) {
 		// 	console.log("at home");
 		// }
