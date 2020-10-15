@@ -17,10 +17,14 @@ function App() {
 				<Navbar collapsed={true} />
 				<Layout>
 					<Sidebar />
-					<Content>
+					<Content style={{ padding: 24 }}>
 						<Switch>
 							<Route path="/calendar">
-								<Calendar />
+								<Calendar
+									onSelect={(value) => {
+										console.log(value._d);
+									}}
+								/>
 							</Route>
 							<Route path="/" component={Journal} />
 							{/* <Route path="/calendar" component={Calendar} />

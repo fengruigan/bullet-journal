@@ -6,6 +6,8 @@ import {
 	UnorderedListOutlined,
 	InfoCircleOutlined,
 } from "@ant-design/icons";
+import Icon from "@ant-design/icons";
+import { ReactComponent as Logo } from "../custom/icons/logo.svg";
 import { Link } from "react-router-dom";
 
 const { Header } = Layout;
@@ -101,7 +103,9 @@ class Navbar extends Component {
 		return (
 			<Header className={this.getClass()}>
 				<div id="brand-logo" style={{ display: "inline" }}>
-					<Link to="/">Bullet Journal</Link>
+					<Link to="/">
+						<Icon component={Logo} /> Bullet Journal
+					</Link>
 				</div>
 				{this.props.collapsed
 					? this.renderDropdown()
