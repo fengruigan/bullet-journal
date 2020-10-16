@@ -1,7 +1,7 @@
 ## How to install and run:
 
 - Clone repo to local machine
-- Make sure node.js is installed (download here)
+- Make sure node.js is installed (download [here](https://nodejs.org/en/download/))
 - Cd to root path of repo and run command “npm install”
 - Run “npm start” to start local server
 
