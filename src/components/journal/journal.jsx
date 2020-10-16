@@ -1,22 +1,33 @@
 import React, { Component } from "react";
 // import CreateTask from "./createTask";
 import Todo from "./todo";
-// import getDate from "../../util/getDate";
+import getDate from "../../util/getDate";
 import "../../css/journal/journal.css";
 
 class Page extends Component {
-	state = {};
+	state = {
+		date: "1",
+	};
 	componentDidMount() {
-		// console.log(this.props);
 		// if (Object.keys(this.props.match.params).length === 0) {
 		// 	console.log("at home");
 		// }
+		// let date = getDate();
+		// this.setState({ date });
 	}
+	renderDate = (params) => {
+		if (params.date !== undefined) {
+			return params.date;
+		} else {
+			return getDate();
+		}
+	};
 	render() {
 		return (
 			<div className="journal">
-				<h1 className="date">{this.props.date}</h1>
-				{/* <h1 className="date">Oct. 2, 2020</h1> */}
+				<h1 className="date">
+					{this.renderDate(this.props.match.params)}
+				</h1>
 				<hr className="wide-divider" />
 				<div className="todo-list">
 					<h5>Todos Today</h5>
