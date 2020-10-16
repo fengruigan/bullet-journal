@@ -1,4 +1,12 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+How to install and run:
+Clone repo to local machine
+Make sure node.js is installed (download here)
+Cd to root path of repo and run command “npm install”
+Run “npm start” to start local server
+Notice:
+DO NOT code on master branch. Instead, code on dev branch and use pull request to merge to master branch.
+Everytime before you code, use “git pull” first
+
 
 ## Available Scripts
 
