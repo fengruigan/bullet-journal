@@ -6,8 +6,7 @@ function getDate(param) {
 		d = new Date();
 	} else {
 		let params = param.split("-");
-		console.log(params);
-		d = new Date();
+		d = new Date(params[0], params[1] - 1, params[2]);
 	}
 	let day = d.getDay();
 	let date = d.getDate();

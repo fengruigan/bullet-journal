@@ -1,60 +1,44 @@
-import React, { Component } from "react";
-import Day from "./day";
-import "../../css/calendar/calendar.css";
+import React, { Component, Fragment } from "react";
+import { Calendar } from "antd";
+import { Redirect } from "react-router-dom";
+import moment from "moment";
 
-class Calendar extends Component {
+class MyCalendar extends Component {
 	state = {
-		day: [],
-		weekday: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+		selected: moment(),
+		redirect: false,
+		redirectTarget: "calendar",
 	};
-	componentDidMount() {
-		console.log(this.props);
-		this.generateCalendar();
+	setRedirect(value) {
+		let target = value.toISOString().substring(0, 10);
+		let redirect = false;
+		if (value.isSame(this.state.selected, "month")) {
+			redirect = true;
+		}
+		this.setState({
+			redirect,
+			selected: value,
+			redirectTarget: target,
+		});
 	}
-	handleClick(id) {
-		// let days = document.querySelectorAll(".day");
-		// days.forEach((day) => {
-		//     console.log(day);
-		// day.classList.remove("selected");
-		// });
-		// console.log(day);
-		console.log(this);
+	renderRedirect() {
+		if (this.state.redirect) {
+			return <Redirect to={"/" + this.state.redirectTarget} />;
+		}
 	}
 	render() {
 		return (
-			<React.Fragment>
-				<h1 style={{ textAlign: "center" }}>
-					This will be the month/year
-				</h1>
-				<div id="calendar-header">
-					{this.state.weekday.map((weekday) => (
-						<div className="header" key={weekday}>
-							{weekday}
-						</div>
-					))}
-				</div>
-				<div id="calendar-main">
-					{this.state.day.map((day) => (
-						<Day
-							key={day.id}
-							day={day.id}
-							// handleClick={() => {
-							//     this.handleClick(day.id);
-							// }}
-						/>
-					))}
-				</div>
-			</React.Fragment>
+			<Fragment>
+				{this.renderRedirect()}
+				<Calendar
+					fullscreen={true}
+					onSelect={(value) => {
+						this.setRedirect(value);
+					}}
+				/>
+			</Fragment>
 		);
-	}
-
-	generateCalendar() {
-		let days = [];
-		for (let i = 1; i < 32; i++) {
-			days.push({ id: i });
-		}
-		this.setState({ day: days });
 	}
 }
 
-export default Calendar;
+export default MyCalendar;
