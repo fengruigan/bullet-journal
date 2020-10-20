@@ -99,11 +99,15 @@ class Navbar extends Component {
 		return "nav nav-" + col;
 	}
 
+	handleClick = () => {
+		this.props.resetDate();
+	};
+
 	render() {
 		return (
 			<Header className={this.getClass()}>
 				<div id="brand-logo" style={{ display: "inline" }}>
-					<Link to="/">
+					<Link to="/" onClick={this.handleClick}>
 						<Icon component={Logo} /> Bullet Journal
 					</Link>
 				</div>

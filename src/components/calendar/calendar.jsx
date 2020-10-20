@@ -9,11 +9,15 @@ class MyCalendar extends Component {
 		redirect: false,
 		redirectTarget: "calendar",
 	};
+	componentDidMount() {
+		this.setState({ selected: this.props.currentDate });
+	}
 	setRedirect(value) {
 		let target = value.toISOString().substring(0, 10);
 		let redirect = false;
 		if (value.isSame(this.state.selected, "month")) {
 			redirect = true;
+			this.props.onRedirect(value);
 		}
 		this.setState({
 			redirect,
@@ -32,6 +36,7 @@ class MyCalendar extends Component {
 				{this.renderRedirect()}
 				<Calendar
 					fullscreen={true}
+					defaultValue={this.props.currentDate}
 					onSelect={(value) => {
 						this.setRedirect(value);
 					}}

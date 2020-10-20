@@ -8,9 +8,6 @@ class Journal extends Component {
 	state = {
 		date: "1",
 	};
-	componentDidMount() {
-		console.log("journal mounted");
-	}
 	renderDate = (match) => {
 		if (match !== undefined && match.params.date !== undefined) {
 			return getDate(match.params.date);

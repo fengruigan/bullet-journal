@@ -1,26 +1,27 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
 
 const { Sider } = Layout;
 
-class Sidebar extends Component {
-	state = {};
-
-	render() {
-		return (
-			<Sider className="sidebar">
-				<Menu mode="inline" theme="dark" selectedKeys={[]}>
-					<Menu.Item key="journal">
-						<Link to="/">Journal</Link>
-					</Menu.Item>
-					<Menu.Item key="calendar">
-						<Link to="/calendar">Calendar</Link>
-					</Menu.Item>
-				</Menu>
-			</Sider>
-		);
-	}
-}
+const Sidebar = (props) => {
+	let [dateLink, setDateLink] = useState("");
+	let dateFromProps = props.currentDate;
+	useEffect(() => {
+		setDateLink(dateFromProps.format("yyyy-MM-DD"));
+	}, [dateFromProps]);
+	return (
+		<Sider className="sidebar">
+			<Menu mode="inline" theme="dark" selectedKeys={[]}>
+				<Menu.Item key="journal">
+					<Link to={"/" + dateLink}>Journal</Link>
+				</Menu.Item>
+				<Menu.Item key="calendar">
+					<Link to="/calendar">Calendar</Link>
+				</Menu.Item>
+			</Menu>
+		</Sider>
+	);
+};
 
 export default Sidebar;
