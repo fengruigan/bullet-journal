@@ -1,22 +1,19 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Calendar, Select, Col, Row, Radio, Button } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
 import { Redirect } from "react-router-dom";
-import moment from "moment";
+import { ReloadOutlined } from "@ant-design/icons";
 
-class MyCalendar extends Component {
-	state = {
-		selected: moment(),
-		redirect: false,
-		redirectTarget: "calendar",
-	};
-	componentDidMount() {
-		this.setState({ selected: this.props.currentDate });
-	}
-	// resetDate = () => {
-	// 	this.setState({ selected: moment() });
-	// };
-	headerRender = ({ value, type, onChange, onTypeChange }) => {
+const MyCalendar = (props) => {
+	let [currentDate, setCurrentDate] = useState(props.currentDate);
+	let [redirect, setRedirect] = useState(false);
+	let [redirectTarget, setRedirectTarget] = useState("calendar");
+	let dateFromProps = props.currentDate;
+
+	useEffect(() => {
+		setCurrentDate(dateFromProps);
+	}, [dateFromProps]);
+
+	let headerRender = ({ value, type, onChange, onTypeChange }) => {
 		const start = 0;
 		const end = 12;
 		const monthOptions = [];
@@ -49,8 +46,6 @@ class MyCalendar extends Component {
 		}
 		return (
 			<div style={{ padding: "12px" }}>
-				{/* <div className="ant-picker-calendar-header"> */}
-				{/* <Typography.Title level={4}>Custom header</Typography.Title> */}
 				<Row gutter={8}>
 					<Col>
 						<Radio.Group
@@ -87,7 +82,7 @@ class MyCalendar extends Component {
 						</Select>
 					</Col>
 					<Col>
-						<Button onClick={this.props.resetDate}>
+						<Button onClick={props.resetDate}>
 							<ReloadOutlined />
 							Back to Today
 						</Button>
@@ -96,39 +91,34 @@ class MyCalendar extends Component {
 			</div>
 		);
 	};
-	setRedirect(value) {
-		let target = value.format("yyyy-MM-DD");
-		let redirect = false;
-		if (value.isSame(this.state.selected, "month")) {
-			redirect = true;
-			this.props.onRedirect(value);
+
+	let setupRedirect = (value) => {
+		if (value.isSame(currentDate, "month")) {
+			setRedirect(true);
+			setRedirectTarget(value.format("yyyy-MM-DD"));
+			props.onRedirect(value);
 		}
-		this.setState({
-			redirect,
-			selected: value,
-			redirectTarget: target,
-		});
-	}
-	renderRedirect() {
-		if (this.state.redirect) {
-			return <Redirect to={"/" + this.state.redirectTarget} />;
+		setCurrentDate(value);
+	};
+	let renderRedirect = () => {
+		if (redirect) {
+			return <Redirect to={"/" + redirectTarget} />;
 		}
-	}
-	render() {
-		return (
-			<Fragment>
-				{this.renderRedirect()}
-				<Calendar
-					fullscreen={true}
-					headerRender={this.headerRender}
-					defaultValue={this.props.currentDate}
-					onSelect={(value) => {
-						this.setRedirect(value);
-					}}
-				/>
-			</Fragment>
-		);
-	}
-}
+	};
+	return (
+		<Fragment>
+			{renderRedirect()}
+			<Calendar
+				{...props}
+				fullscreen={true}
+				headerRender={headerRender}
+				value={currentDate}
+				onSelect={(value) => {
+					setupRedirect(value);
+				}}
+			/>
+		</Fragment>
+	);
+};
 
 export default MyCalendar;

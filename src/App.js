@@ -20,7 +20,6 @@ class APP extends Component {
 
 	resetDate = () => {
 		this.setState({ currentDate: moment() });
-		console.log("hi");
 	};
 
 	render() {
