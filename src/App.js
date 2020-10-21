@@ -20,6 +20,7 @@ class APP extends Component {
 
 	resetDate = () => {
 		this.setState({ currentDate: moment() });
+		console.log("hi");
 	};
 
 	render() {
@@ -34,6 +35,7 @@ class APP extends Component {
 							<Switch>
 								<Route path="/calendar">
 									<MyCalendar
+										resetDate={this.resetDate}
 										currentDate={this.state.currentDate}
 										onRedirect={this.onDateChange}
 									/>
