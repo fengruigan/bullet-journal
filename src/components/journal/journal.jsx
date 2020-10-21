@@ -5,9 +5,7 @@ import getDate from "../../util/getDate";
 import "../../css/journal/journal.css";
 
 class Journal extends Component {
-	state = {
-		date: "1",
-	};
+	state = {};
 	renderDate = (match) => {
 		if (match !== undefined && match.params.date !== undefined) {
 			return getDate(match.params.date);

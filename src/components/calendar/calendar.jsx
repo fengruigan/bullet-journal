@@ -4,15 +4,34 @@ import { Redirect } from "react-router-dom";
 import { ReloadOutlined } from "@ant-design/icons";
 
 const MyCalendar = (props) => {
+	// This is a wrapper for ant design Calendar component.
+	// I handle calendar redirect logics here to make the main App component code a bit cleaner.
+
+	// currentDate is the date which will be shown as selected on the calendar
+	// The default value is the date state passed from App component.
+	// Meaning the default selected date is the date state from App component
 	let [currentDate, setCurrentDate] = useState(props.currentDate);
+
+	// redirect tracks the redirect status and determines whether to redirect or not.
+	// Defaulting to be not redirecting.
 	let [redirect, setRedirect] = useState(false);
+
+	// redirectTarget tracks the redirect target date to use in url
+	// Defaulting to redirect to "/calendar"
 	let [redirectTarget, setRedirectTarget] = useState("calendar");
+
+	// the date state is passed from App component down to here through props.
 	let dateFromProps = props.currentDate;
 
+	// useEffect sets the currentDate to be the date state passed from App component.
+	// whenever dateFromProps is changed.
 	useEffect(() => {
 		setCurrentDate(dateFromProps);
 	}, [dateFromProps]);
 
+	// This function is used to render a custom calendar header
+	// I am using this only to add a "back to today" button
+	// Most can be ignored unless details need to be changed
 	let headerRender = ({ value, type, onChange, onTypeChange }) => {
 		const start = 0;
 		const end = 12;
@@ -81,6 +100,10 @@ const MyCalendar = (props) => {
 							{monthOptions}
 						</Select>
 					</Col>
+
+					{/* This is the button I added, all above are default buttons.
+						Unfortunately I cannot seem to refactor this code into another file
+						due to the need of resetDate from props, sucks */}
 					<Col>
 						<Button onClick={props.resetDate}>
 							<ReloadOutlined />
@@ -92,19 +115,25 @@ const MyCalendar = (props) => {
 		);
 	};
 
+	// This function is called whenever a date is selected on the calendar
 	let setupRedirect = (value) => {
+		// if the selected date is in the same month as currentDate
 		if (value.isSame(currentDate, "month")) {
 			setRedirect(true);
 			setRedirectTarget(value.format("yyyy-MM-DD"));
-			props.onRedirect(value);
+			props.onRedirect(value); // Calling onDateChange in App component
 		}
+		// set currentDate to be the selected date
 		setCurrentDate(value);
 	};
+
+	// This triggers a redirect whenever redirect is true
 	let renderRedirect = () => {
 		if (redirect) {
 			return <Redirect to={"/" + redirectTarget} />;
 		}
 	};
+
 	return (
 		<Fragment>
 			{renderRedirect()}

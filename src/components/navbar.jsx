@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { Layout, Menu, Dropdown } from "antd";
-import {
+import Icon, {
 	UserOutlined,
 	UserAddOutlined,
 	UnorderedListOutlined,
 	InfoCircleOutlined,
 } from "@ant-design/icons";
-import Icon from "@ant-design/icons";
 import { ReactComponent as Logo } from "../custom/icons/logo.svg";
 import { Link } from "react-router-dom";
 
@@ -15,6 +14,10 @@ const { Header } = Layout;
 class Navbar extends Component {
 	state = {};
 
+	// Because ant design does not accomodate resizing very well, they do not have automatic collapse of Navbars,
+	// so we have to write our own and use media queries to conditonal render
+
+	// This renders the fullsize menu
 	renderMenu() {
 		return (
 			<Menu
@@ -47,6 +50,7 @@ class Navbar extends Component {
 		);
 	}
 
+	// This renders the collapsed menu
 	renderDropdown() {
 		let menuItem = (
 			<Menu
@@ -93,12 +97,13 @@ class Navbar extends Component {
 		return menu;
 	}
 
+	// This generates the class strings for
 	getClass() {
-		// console.log(this.props.collapsed);
-		let col = this.props.collapsed ? "collapse" : "norm";
+		let col = this.props.collapsed ? "collapse" : "full";
 		return "nav nav-" + col;
 	}
 
+	// This calls the resetDate funciton defined in App.js
 	handleClick = () => {
 		this.props.resetDate();
 	};

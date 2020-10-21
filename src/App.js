@@ -12,12 +12,16 @@ const { Content } = Layout;
 
 class APP extends Component {
 	state = {
+		// currentDate will keep track of the date state of the whole APP for use in Sidebar and Calendar
 		currentDate: moment(),
 	};
+
+	// This function is called when the date state is changed. Called from MyCalendar
 	onDateChange = (selectedDate) => {
 		this.setState({ currentDate: selectedDate });
 	};
 
+	// This function is called when date state is reset. Called from MyCalendar and Navbar
 	resetDate = () => {
 		this.setState({ currentDate: moment() });
 	};

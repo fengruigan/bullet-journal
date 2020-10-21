@@ -1,4 +1,4 @@
-// This function returns a date string to display on top of the journal page
+// This function serves as a date string parser and returns a date string to display on top of the journal page
 
 function getDate(param) {
 	let d;
