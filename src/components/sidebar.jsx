@@ -4,17 +4,14 @@ import { Link } from "react-router-dom";
 
 const { Sider } = Layout;
 
-const Sidebar = (props) => {
+const Sidebar = ({ currentDate }) => {
 	// dateLink is the redirect link which redirects to the correct journal page
 	let [dateLink, setDateLink] = useState("");
 
-	// the date state is passed from App component down to here through props
-	let dateFromProps = props.currentDate;
-
-	// useEffect sets the dateLink whenever dateFromProps is changed
+	// useEffect sets the dateLink whenever currentDate is changed
 	useEffect(() => {
-		setDateLink(dateFromProps.format("yyyy-MM-DD"));
-	}, [dateFromProps]);
+		setDateLink(currentDate.format("yyyy-MM-DD"));
+	}, [currentDate]);
 
 	return (
 		<Sider className="sidebar">

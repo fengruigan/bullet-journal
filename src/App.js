@@ -1,14 +1,14 @@
+import { Layout } from "antd";
+import moment from "moment";
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import MyCalendar from "./components/calendar/calendar";
+import Journal from "./components/journal/journal";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
-import Journal from "./components/journal/journal";
-import MyCalendar from "./components/calendar/calendar";
-import moment from "moment";
-import { Layout } from "antd";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./css/App.css";
 
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 
 class APP extends Component {
 	state = {
@@ -45,15 +45,33 @@ class APP extends Component {
 								</Route>
 								<Route
 									path="/:date"
-									render={(props) => <Journal {...props} />}
+									// render={(props) => <Journal {...props} />}
+									render={() => (
+										<Journal
+											currentDate={this.state.currentDate}
+										/>
+									)}
 								/>
 								<Route
 									path="/"
-									render={(props) => <Journal {...props} />}
+									// render={(props) => <Journal {...props} />}
+									render={() => (
+										<Journal
+											currentDate={this.state.currentDate}
+										/>
+									)}
 								/>
 							</Switch>
 						</Content>
 					</Layout>
+					<Footer
+						style={{
+							textAlign: "center",
+							backgroundColor: "white",
+						}}
+					>
+						Fengrui Gan ©2020
+					</Footer>
 				</Layout>
 			</Router>
 		);
