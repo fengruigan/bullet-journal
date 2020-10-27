@@ -1,7 +1,9 @@
-import React, { Fragment } from "react";
-import { SettingOutlined, SmileFilled } from "@ant-design/icons";
+import React, { Fragment, useState } from "react";
+import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
 import { Input, Popover, Card, Tooltip } from "antd";
+import "../../css/journal/createTask.css";
 
+// later fetch from user config
 const types = [
 	{ content: "Todo", icon: <SmileFilled /> },
 	{ content: "Thought", icon: <SettingOutlined /> },
@@ -10,57 +12,55 @@ const types = [
 	{ content: "Misc.", icon: <SettingOutlined /> },
 ];
 
-const gridStyle = {
-	width: "25%",
-	textAlign: "center",
-	padding: "6px",
-};
+const CreateTask = () => {
+	let [type, setType] = useState(<SmileFilled />);
 
-const popContent = (
-	<Card>
-		{types.map((item) => {
-			return (
-				<Card.Grid style={gridStyle}>
-					<Tooltip
-						title={item.content}
-						placement={"top"}
-						arrowPointAtCenter={false}
-					>
-						<p style={{ fontSize: "1.3em", marginBottom: 0 }}>
-							{item.icon}
-						</p>
-					</Tooltip>
-					<p
-						style={{
-							color: "gray",
-							marginBottom: 0,
-							maxWidth: "4em",
-							overflow: "hidden",
-							textOverflow: "ellipsis",
+	const popContent = (
+		<Card>
+			{types.map((item, index) => {
+				return (
+					<Card.Grid
+						className="type-grid"
+						key={index}
+						onClick={() => {
+							setType(item.icon);
 						}}
 					>
-						{item.content}
-					</p>
-				</Card.Grid>
-			);
-		})}
-	</Card>
-);
+						<Tooltip
+							title={item.content}
+							placement={"top"}
+							arrowPointAtCenter={true}
+						>
+							<div style={{ fontSize: "1.3em", marginBottom: 0 }}>
+								{item.icon}
+							</div>
+						</Tooltip>
+						<p className="type-description">{item.content}</p>
+					</Card.Grid>
+				);
+			})}
+			{/* This will be the new type button */}
+			<Card.Grid className="type-grid">
+				<Tooltip title={"Add new tag"} placement={"top"}>
+					<div className="type-new">
+						<PlusOutlined />
+					</div>
+				</Tooltip>
+			</Card.Grid>
+		</Card>
+	);
 
-const listType = (
-	<Popover content={popContent} trigger={"click"} placement={"bottom"}>
-		<SettingOutlined />
-	</Popover>
-);
+	const listType = (
+		<Popover content={popContent} trigger={"click"} placement={"bottom"}>
+			{type}
+		</Popover>
+	);
 
-const CreateTask = () => {
 	return (
 		<Fragment>
-			{" "}
 			<Input
 				addonBefore={listType}
-				bordered={true}
-				placeholder="Todo content"
+				placeholder="Jot down your note here"
 			/>
 		</Fragment>
 	);

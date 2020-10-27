@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
+import { BookOutlined, CalendarOutlined } from "@ant-design/icons";
 
 const { Sider } = Layout;
 
@@ -14,13 +15,19 @@ const Sidebar = ({ currentDate }) => {
 	}, [currentDate]);
 
 	return (
-		<Sider className="sidebar">
+		<Sider id="sidebar">
 			<Menu mode="inline" theme="dark" selectedKeys={[]}>
 				<Menu.Item key="journal">
-					<Link to={"/" + dateLink}>Journal</Link>
+					<Link to={"/" + dateLink}>
+						<BookOutlined />
+						Journal
+					</Link>
 				</Menu.Item>
 				<Menu.Item key="calendar">
-					<Link to="/calendar">Calendar</Link>
+					<Link to="/calendar">
+						<CalendarOutlined />
+						Calendar
+					</Link>
 				</Menu.Item>
 			</Menu>
 		</Sider>

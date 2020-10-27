@@ -15,12 +15,9 @@ a {
 	background-color: white;
 	padding: 0;
 }
-.sidebar {
-	color: white;
-}
+
 #brand-logo a {
 	color: black;
-	/* color: white; */
 }
 
 #brand-logo {
@@ -41,6 +38,10 @@ a {
 }
 
 @media (max-width: 991px) {
+	#sidebar {
+		display: none;
+	}
+
 	#brand-logo {
 		font-size: 1.7rem;
 	}

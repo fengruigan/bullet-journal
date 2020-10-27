@@ -5,6 +5,8 @@ import Icon, {
 	UserAddOutlined,
 	UnorderedListOutlined,
 	InfoCircleOutlined,
+	BookOutlined,
+	CalendarOutlined,
 } from "@ant-design/icons";
 import { ReactComponent as Logo } from "../custom/icons/logo.svg";
 import { Link } from "react-router-dom";
@@ -79,6 +81,19 @@ class Navbar extends Component {
 					icon={<UserAddOutlined style={{ fontsize: "1.2em" }} />}
 				>
 					Sign-Up
+				</Menu.Item>
+				<Menu.Divider />
+				<Menu.Item
+					key="journal"
+					icon={<BookOutlined style={{ fontsize: "1.2em" }} />}
+				>
+					Journal
+				</Menu.Item>
+				<Menu.Item
+					key="calendar"
+					icon={<CalendarOutlined style={{ fontsize: "1.2em" }} />}
+				>
+					Calendar
 				</Menu.Item>
 			</Menu>
 		);
