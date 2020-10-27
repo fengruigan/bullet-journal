@@ -3,7 +3,7 @@ import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
 import { Input, Popover, Card, Tooltip } from "antd";
 import "../../css/journal/createTask.css";
 
-// later fetch from user config
+// This is the list of LIST types users can create. Later on this will be fetched from user data
 const types = [
 	{ content: "Todo", icon: <SmileFilled /> },
 	{ content: "Thought", icon: <SettingOutlined /> },
@@ -13,10 +13,13 @@ const types = [
 ];
 
 const CreateTask = () => {
+	// Sets the state for the input, I might need a reducer
 	let [type, setType] = useState(<SmileFilled />);
 
+	// content to go into the popover
 	const popContent = (
 		<Card>
+			{/* The list of LIST types */}
 			{types.map((item, index) => {
 				return (
 					<Card.Grid
@@ -56,6 +59,7 @@ const CreateTask = () => {
 		</Popover>
 	);
 
+	// The input field for creating new LIST
 	return (
 		<Fragment>
 			<Input

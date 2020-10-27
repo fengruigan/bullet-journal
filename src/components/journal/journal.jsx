@@ -7,6 +7,7 @@ import "../../css/journal/journal.css";
 const Journal = ({ currentDate }) => {
 	let [todos, setTodos] = useState({ data: null, loading: true });
 
+	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
 			let date = currentDate.format("yyyy-MM-DD");
@@ -22,6 +23,7 @@ const Journal = ({ currentDate }) => {
 		fetchData();
 	}, [currentDate]);
 
+	// takes data and renders the list
 	const generateList = () => {
 		if (todos.data === null || todos.data.length === 0) {
 			return <Empty />;
@@ -61,7 +63,12 @@ const Journal = ({ currentDate }) => {
 					generateList()
 				)}
 			</div>
+
+			{/* This may be renamed into something else */}
 			<CreateTask />
+
+			{/* Currently I am thinking of building one large list instead of two */}
+
 			{/* <div className="divider"></div>
 			<div className="general-list">
 				<h5>Note</h5>
