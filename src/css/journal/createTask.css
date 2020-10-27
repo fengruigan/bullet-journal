@@ -1,8 +1,22 @@
-.input-field.inline {
-    margin: 0;
-    padding: 0;
+.type-grid {
+	width: 20%;
+	text-align: center;
+	padding: 6px;
+	max-width: 5.5em;
 }
-.new-task {
-    margin-left: 5px;
-    margin-top: 10px;
+
+.type-description {
+	text-align: center;
+	color: gray;
+	margin-bottom: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.type-new {
+	color: rgba(0, 0, 0, 0.3);
+	font-size: 2em;
+	padding-top: 0.075em;
+	padding-bottom: 0.075em;
+	border: 1px dashed rgba(0, 0, 0, 0.3);
 }

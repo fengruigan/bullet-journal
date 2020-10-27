@@ -8,26 +8,6 @@ a {
 	color: black;
 }
 
-/* body {
-	background: rgb(133, 51, 255);
-	background: -moz-linear-gradient(
-		90deg,
-		rgba(133, 51, 255, 1) 12%,
-		rgba(189, 44, 255, 1) 65%
-	);
-	background: -webkit-linear-gradient(
-		90deg,
-		rgba(133, 51, 255, 1) 12%,
-		rgba(189, 44, 255, 1) 65%
-	);
-	background: linear-gradient(
-		90deg,
-		rgba(133, 51, 255, 1) 12%,
-		rgba(189, 44, 255, 1) 65%
-	);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8533ff",endColorstr="#bd2cff",GradientType=1);
-} */
-
 .icons {
 	font-size: 3em;
 }
@@ -35,12 +15,9 @@ a {
 	background-color: white;
 	padding: 0;
 }
-.sidebar {
-	color: white;
-}
+
 #brand-logo a {
 	color: black;
-	/* color: white; */
 }
 
 #brand-logo {
@@ -55,16 +32,20 @@ a {
 	.nav-collapse {
 		display: none;
 	}
-	.nav-norm {
+	.nav-full {
 		display: block;
 	}
 }
 
 @media (max-width: 991px) {
+	#sidebar {
+		display: none;
+	}
+
 	#brand-logo {
 		font-size: 1.7rem;
 	}
-	.nav-norm {
+	.nav-full {
 		display: none;
 	}
 	.nav-collapse {

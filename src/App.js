@@ -1,40 +1,81 @@
-import React from "react";
+import { Layout } from "antd";
+import moment from "moment";
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import MyCalendar from "./components/calendar/calendar";
+import Journal from "./components/journal/journal";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
-import Journal from "./components/journal/journal";
-// import Calendar from "./components/calendar/calendar";
-import { Layout, Calendar } from "antd";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./css/App.css";
 
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 
-function App() {
-	return (
-		<Router>
-			<Layout>
-				<Navbar collapsed={false} />
-				<Navbar collapsed={true} />
+class APP extends Component {
+	state = {
+		// currentDate will keep track of the date state of the whole APP for use in Sidebar and Calendar
+		currentDate: moment(),
+	};
+
+	// This function is called when the date state is changed. Called from MyCalendar
+	onDateChange = (selectedDate) => {
+		this.setState({ currentDate: selectedDate });
+	};
+
+	// This function is called when date state is reset. Called from MyCalendar and Navbar
+	resetDate = () => {
+		this.setState({ currentDate: moment() });
+	};
+
+	render() {
+		return (
+			<Router>
 				<Layout>
-					<Sidebar />
-					<Content style={{ padding: 24 }}>
-						<Switch>
-							<Route path="/calendar">
-								<Calendar
-									onSelect={(value) => {
-										console.log(value._d);
-									}}
+					<Navbar collapsed={false} resetDate={this.resetDate} />
+					<Navbar collapsed={true} resetDate={this.resetDate} />
+					<Layout>
+						<Sidebar currentDate={this.state.currentDate} />
+						<Content style={{ padding: 24 }}>
+							<Switch>
+								<Route path="/calendar">
+									<MyCalendar
+										resetDate={this.resetDate}
+										currentDate={this.state.currentDate}
+										onRedirect={this.onDateChange}
+									/>
+								</Route>
+								<Route
+									path="/:date"
+									// render={(props) => <Journal {...props} />}
+									render={() => (
+										<Journal
+											currentDate={this.state.currentDate}
+										/>
+									)}
 								/>
-							</Route>
-							<Route path="/" component={Journal} />
-							{/* <Route path="/calendar" component={Calendar} />
-							<Route path="/" component={Journal} /> */}
-						</Switch>
-					</Content>
+								<Route
+									path="/"
+									// render={(props) => <Journal {...props} />}
+									render={() => (
+										<Journal
+											currentDate={this.state.currentDate}
+										/>
+									)}
+								/>
+							</Switch>
+						</Content>
+					</Layout>
+					<Footer
+						style={{
+							textAlign: "center",
+							backgroundColor: "white",
+						}}
+					>
+						Fengrui Gan ©2020
+					</Footer>
 				</Layout>
-			</Layout>
-		</Router>
-	);
+			</Router>
+		);
+	}
 }
 
-export default App;
+export default APP;
