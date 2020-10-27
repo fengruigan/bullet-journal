@@ -30,8 +30,16 @@ class APP extends Component {
 		return (
 			<Router>
 				<Layout>
-					<Navbar collapsed={false} resetDate={this.resetDate} />
-					<Navbar collapsed={true} resetDate={this.resetDate} />
+					<Navbar
+						collapsed={false}
+						resetDate={this.resetDate}
+						currentDate={this.state.currentDate}
+					/>
+					<Navbar
+						collapsed={true}
+						resetDate={this.resetDate}
+						currentDate={this.state.currentDate}
+					/>
 					<Layout>
 						<Sidebar currentDate={this.state.currentDate} />
 						<Content style={{ padding: 24 }}>
