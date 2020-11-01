@@ -1,20 +1,38 @@
 import React, { Fragment, useState } from "react";
 import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
-import { Input, Popover, Card, Tooltip } from "antd";
+import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
+import Emoji from "../emoji";
 import "../../css/journal/createTask.css";
 
 // This is the list of LIST types users can create. Later on this will be fetched from user data
 const types = [
-	{ content: "Todo", icon: <SmileFilled /> },
-	{ content: "Thought", icon: <SettingOutlined /> },
-	{ content: "Note", icon: <SmileFilled /> },
-	{ content: "Miscellaneous", icon: <SettingOutlined /> },
-	{ content: "Misc.", icon: <SettingOutlined /> },
+	{ content: "Todo", icon: <SmileFilled />, emoji: "✅" },
+	{
+		content: "Thought",
+		icon: <SettingOutlined />,
+		emoji: <Emoji symbol={"🤓"} />,
+	},
+	{ content: "Note", icon: <SmileFilled />, emoji: "✏️" },
+	{
+		content: "Miscellaneous",
+		icon: <SettingOutlined />,
+		emoji: "🧸",
+	},
+	{
+		content: "Misc.",
+		icon: <SettingOutlined />,
+		emoji: "📌",
+	},
 ];
 
-const CreateTask = () => {
+const CreateTask = ({ handleClick, onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
-	let [type, setType] = useState(<SmileFilled />);
+	let [type, setType] = useState("✅");
+	const [form] = Form.useForm();
+
+	const onReset = () => {
+		form.resetFields();
+	};
 
 	// content to go into the popover
 	const popContent = (
@@ -26,7 +44,7 @@ const CreateTask = () => {
 						className="type-grid"
 						key={index}
 						onClick={() => {
-							setType(item.icon);
+							setType(item.emoji);
 						}}
 					>
 						<Tooltip
@@ -35,7 +53,7 @@ const CreateTask = () => {
 							arrowPointAtCenter={true}
 						>
 							<div style={{ fontSize: "1.3em", marginBottom: 0 }}>
-								{item.icon}
+								{item.emoji}
 							</div>
 						</Tooltip>
 						<p className="type-description">{item.content}</p>
@@ -55,17 +73,44 @@ const CreateTask = () => {
 
 	const listType = (
 		<Popover content={popContent} trigger={"click"} placement={"bottom"}>
-			{type}
+			<span style={{ padding: "0", fontSize: "1.5em" }}>
+				<Emoji symbol={type} />
+			</span>
 		</Popover>
 	);
 
 	// The input field for creating new LIST
 	return (
 		<Fragment>
-			<Input
-				addonBefore={listType}
-				placeholder="Jot down your note here"
-			/>
+			<Form
+				form={form}
+				onFinish={(values) => {
+					let json = { ...values };
+					json.type = type;
+					onSubmit(json);
+					onReset();
+					console.log(json);
+				}}
+			>
+				<Form.Item name="content">
+					<Input
+						size="large"
+						onClick={() => {
+							handleClick();
+						}}
+						onSubmit={() => {
+							console.log("hi");
+						}}
+						addonBefore={listType}
+						placeholder="Jot down your note here"
+					/>
+				</Form.Item>
+				<Form.Item>
+					<Button type="primary" htmlType="submit">
+						Add to list
+					</Button>
+				</Form.Item>
+			</Form>
 		</Fragment>
 	);
 };
