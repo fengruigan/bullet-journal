@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
 import CreateTask from "./createTask";
 import Emoji from "../emoji";
-import { LoadingOutlined } from "@ant-design/icons";
-import { Empty, List } from "antd";
+import {
+	LoadingOutlined,
+	LeftOutlined,
+	RightOutlined,
+} from "@ant-design/icons";
+import { Empty, List, Button, Col, Row, Typography } from "antd";
 import "../../css/journal/journal.css";
+import moment from "moment";
 
-const Journal = ({ currentDate }) => {
+const Journal = ({ currentDate, onRedirect }) => {
 	let [todos, setTodos] = useState({ data: [], loading: true });
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
-			let date = currentDate.format("yyyy-MM-DD");
-			const response = await fetch("http://localhost:8000/api/" + date);
+			let urlDate = currentDate.format("yyyy-MM-DD");
+			const response = await fetch(
+				"http://localhost:8000/api/" + urlDate
+			);
 			let json;
 			try {
 				json = await response.json();
@@ -23,6 +30,42 @@ const Journal = ({ currentDate }) => {
 		};
 		fetchData();
 	}, [currentDate]);
+
+	// This renders the header of the journal page
+	const renderHeader = () => (
+		<Row align="middle">
+			<Col span={5}>
+				<Button
+					id="header-button-left"
+					onClick={() => {
+						let target = currentDate.subtract(1, "day");
+						onRedirect(target.clone());
+					}}
+				>
+					<LeftOutlined />
+					Prev
+				</Button>
+			</Col>
+			<Col span={14}>
+				<Typography.Title id="date">
+					{currentDate.format("ddd MMM. DD, yyyy")}
+				</Typography.Title>
+			</Col>
+			<Col span={5}>
+				{moment().isSame(currentDate, "day") ? null : (
+					<Button
+						id="header-button-right"
+						onClick={() => {
+							let target = currentDate.add(1, "day");
+							onRedirect(target.clone());
+						}}
+					>
+						Next <RightOutlined />
+					</Button>
+				)}
+			</Col>
+		</Row>
+	);
 
 	// takes data and renders the list
 	const generateList = () => {
@@ -45,6 +88,7 @@ const Journal = ({ currentDate }) => {
 		}
 	};
 
+	// This function creates new list item from input field
 	const addToList = (item) => {
 		// let list = [...todos.data];
 		// let json = JSON.stringify({ data: item });
@@ -67,7 +111,7 @@ const Journal = ({ currentDate }) => {
 
 	return (
 		<div className="journal">
-			<h1 className="date">{currentDate.format("ddd MMM. DD, yyyy")}</h1>
+			{renderHeader()}
 			<hr className="wide-divider" />
 			<div className="todo-list">
 				{todos.loading ? (

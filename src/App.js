@@ -66,6 +66,7 @@ class APP extends Component {
 									render={() => (
 										<Journal
 											currentDate={this.state.currentDate}
+											onRedirect={this.onDateChange}
 										/>
 									)}
 								/>
