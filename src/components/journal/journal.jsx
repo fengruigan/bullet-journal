@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import CreateTask from "./createTask";
-import { LoadingOutlined, SettingOutlined } from "@ant-design/icons";
+import Emoji from "../emoji";
+import { LoadingOutlined } from "@ant-design/icons";
 import { Empty, List } from "antd";
 import "../../css/journal/journal.css";
 
 const Journal = ({ currentDate }) => {
-	let [todos, setTodos] = useState({ data: null, loading: true });
+	let [todos, setTodos] = useState({ data: [], loading: true });
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
@@ -34,7 +35,7 @@ const Journal = ({ currentDate }) => {
 					renderItem={(item) => (
 						<List.Item>
 							<List.Item.Meta
-								avatar={<SettingOutlined />}
+								avatar={<Emoji symbol={item.type} />}
 								description={item.content}
 							/>
 						</List.Item>
@@ -42,6 +43,26 @@ const Journal = ({ currentDate }) => {
 				></List>
 			);
 		}
+	};
+
+	const addToList = (item) => {
+		// let list = [...todos.data];
+		// let json = JSON.stringify({ data: item });
+		// fetch("http://localhost:8000/api", {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: json,
+		// });
+		// let listItem = { content: item };
+		let list = [...todos.data, item];
+		setTodos({ data: list, loading: false });
+		console.log("posting " + item);
+	};
+
+	const handleClick = () => {
+		console.log("input clicked");
 	};
 
 	return (
@@ -65,7 +86,16 @@ const Journal = ({ currentDate }) => {
 			</div>
 
 			{/* This may be renamed into something else */}
-			<CreateTask />
+			{/* <form
+				onSubmit={(e) => {
+					e.preventDefault();
+					// handleSubmit();
+					// addToList("hi");
+					// console.log("form submitted");
+				}}
+			> */}
+			<CreateTask handleClick={handleClick} onSubmit={addToList} />
+			{/* </form> */}
 
 			{/* Currently I am thinking of building one large list instead of two */}
 
