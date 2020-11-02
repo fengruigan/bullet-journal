@@ -11,13 +11,12 @@ import "../../css/journal/journal.css";
 import moment from "moment";
 
 const Journal = ({ currentDate, onRedirect }) => {
-	let [date, setDate] = useState(currentDate);
 	let [todos, setTodos] = useState({ data: [], loading: true });
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
-			let urlDate = date.format("yyyy-MM-DD");
+			let urlDate = currentDate.format("yyyy-MM-DD");
 			const response = await fetch(
 				"http://localhost:8000/api/" + urlDate
 			);
@@ -30,7 +29,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 			setTodos({ data: json, loading: false });
 		};
 		fetchData();
-	}, [date]);
+	}, [currentDate]);
 
 	const renderHeader = () => (
 		<Row align="middle">
@@ -39,8 +38,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 					id="header-button-left"
 					onClick={() => {
 						let target = currentDate.subtract(1, "day");
-						onRedirect(target);
-						setDate(target.clone());
+						onRedirect(target.clone());
 					}}
 				>
 					<LeftOutlined />
@@ -59,7 +57,6 @@ const Journal = ({ currentDate, onRedirect }) => {
 						onClick={() => {
 							let target = currentDate.add(1, "day");
 							onRedirect(target.clone());
-							setDate(target);
 						}}
 					>
 						Next <RightOutlined />
