@@ -31,6 +31,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		fetchData();
 	}, [currentDate]);
 
+	// This renders the header of the journal page
 	const renderHeader = () => (
 		<Row align="middle">
 			<Col span={5}>
@@ -87,6 +88,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		}
 	};
 
+	// This function creates new list item from input field
 	const addToList = (item) => {
 		// let list = [...todos.data];
 		// let json = JSON.stringify({ data: item });
