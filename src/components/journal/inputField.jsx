@@ -25,7 +25,7 @@ const types = [
 	},
 ];
 
-const CreateTask = ({ handleClick, onSubmit }) => {
+const InputField = ({ handleClick, onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
 	let [type, setType] = useState("✅");
 	const [form] = Form.useForm();
@@ -92,7 +92,15 @@ const CreateTask = ({ handleClick, onSubmit }) => {
 					console.log(json);
 				}}
 			>
-				<Form.Item name="content">
+				<Form.Item
+					name="content"
+					rules={[
+						{
+							required: "true",
+							message: "Please write down your notes here",
+						},
+					]}
+				>
 					<Input
 						size="large"
 						onClick={() => {
@@ -115,4 +123,4 @@ const CreateTask = ({ handleClick, onSubmit }) => {
 	);
 };
 
-export default CreateTask;
+export default InputField;

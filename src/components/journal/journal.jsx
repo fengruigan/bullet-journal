@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
-import CreateTask from "./createTask";
+import InputField from "./inputField";
 import Emoji from "../emoji";
 import {
 	LoadingOutlined,
 	LeftOutlined,
 	RightOutlined,
 } from "@ant-design/icons";
-import { Empty, List, Button, Col, Row, Typography } from "antd";
+import { Empty, List, Button, Col, Row, Typography, message } from "antd";
 import "../../css/journal/journal.css";
 import moment from "moment";
 
 const Journal = ({ currentDate, onRedirect }) => {
-	let [todos, setTodos] = useState({ data: [], loading: true });
+	let [list, setList] = useState({ data: [], loading: true });
+
+	// this temp array is to store the newly created list items that have yet to send to DB
+	// and will be cleared as soon as the items are successfully sent
+	let [temp, setTemp] = useState([]);
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
@@ -20,13 +24,16 @@ const Journal = ({ currentDate, onRedirect }) => {
 			const response = await fetch(
 				"http://localhost:8000/api/" + urlDate
 			);
+			if (response.ok) {
+				console.log("fetched from DB");
+			}
 			let json;
 			try {
 				json = await response.json();
 			} catch {
 				json = [];
 			}
-			setTodos({ data: json, loading: false });
+			setList({ data: json, loading: false });
 		};
 		fetchData();
 	}, [currentDate]);
@@ -69,12 +76,12 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// takes data and renders the list
 	const generateList = () => {
-		if (todos.data === null || todos.data.length === 0) {
+		if (list.data === null || list.data.length === 0) {
 			return <Empty />;
 		} else {
 			return (
 				<List
-					dataSource={todos.data}
+					dataSource={list.data}
 					renderItem={(item) => (
 						<List.Item>
 							<List.Item.Meta
@@ -90,7 +97,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// This function creates new list item from input field
 	const addToList = (item) => {
-		// let list = [...todos.data];
+		// let list = [...list.data];
 		// let json = JSON.stringify({ data: item });
 		// fetch("http://localhost:8000/api", {
 		// 	method: "POST",
@@ -100,9 +107,27 @@ const Journal = ({ currentDate, onRedirect }) => {
 		// 	body: json,
 		// });
 		// let listItem = { content: item };
-		let list = [...todos.data, item];
-		setTodos({ data: list, loading: false });
+		let newList = [...list.data, item];
+		let newTemp = [...temp, item];
+		setList({ data: newList, loading: false });
+		setTemp(newTemp);
 		console.log("posting " + item);
+		// message.warning("Journal save failed", 0);
+		let i = 5;
+		let key = "save";
+		const waitTimer = setInterval(() => {
+			message.warning({
+				content: "Retrying in " + i + " seconds",
+				duration: 0,
+				key,
+			});
+			i--;
+			console.log("timer tick");
+		}, 1000);
+		setTimeout(() => {
+			clearInterval(waitTimer);
+			message.loading({ content: "Saving...", duration: 1, key });
+		}, (i + 1) * 1000);
 	};
 
 	const handleClick = () => {
@@ -114,7 +139,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 			{renderHeader()}
 			<hr className="wide-divider" />
 			<div className="todo-list">
-				{todos.loading ? (
+				{list.loading ? (
 					<LoadingOutlined
 						style={{
 							display: "flex",
@@ -130,23 +155,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 			</div>
 
 			{/* This may be renamed into something else */}
-			{/* <form
-				onSubmit={(e) => {
-					e.preventDefault();
-					// handleSubmit();
-					// addToList("hi");
-					// console.log("form submitted");
-				}}
-			> */}
-			<CreateTask handleClick={handleClick} onSubmit={addToList} />
-			{/* </form> */}
-
-			{/* Currently I am thinking of building one large list instead of two */}
-
-			{/* <div className="divider"></div>
-			<div className="general-list">
-				<h5>Note</h5>
-			</div> */}
+			<InputField handleClick={handleClick} onSubmit={addToList} />
 		</div>
 	);
 };
