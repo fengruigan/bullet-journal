@@ -89,7 +89,6 @@ const InputField = ({ handleClick, onSubmit }) => {
 					json.type = type;
 					onSubmit(json);
 					onReset();
-					console.log(json);
 				}}
 			>
 				<Form.Item
@@ -105,9 +104,6 @@ const InputField = ({ handleClick, onSubmit }) => {
 						size="large"
 						onClick={() => {
 							handleClick();
-						}}
-						onSubmit={() => {
-							console.log("hi");
 						}}
 						addonBefore={listType}
 						placeholder="Jot down your note here"
