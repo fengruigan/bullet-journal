@@ -1,16 +1,28 @@
-import { useState } from "react";
-
-const generateUrl = (baseUrl, options) => {
-	return baseUrl + options;
+const generateUrl = (baseUrl, date) => {
+	return baseUrl + date;
 };
 
-export const useFetch = async (baseUrl, options) => {
-	let [value, setValue] = useState({});
-	let url = generateUrl(baseUrl, options);
-	fetch(url)
-		.then((response) => {
-			response.json();
-		})
-		.then((json) => setValue(json));
-	return value;
+const useFetch = async (baseUrl, options) => {
+	if (options.method === "get") {
+		let url = generateUrl(baseUrl, options.currentDate);
+		let response;
+		let json = {};
+		try {
+			response = await fetch(url);
+			json.serverStatus = response.status;
+		} catch {
+			response = null;
+			json.serverStatus = 504;
+		}
+		let data;
+		try {
+			data = await response.json();
+		} catch {
+			data = [];
+		}
+		json = { ...json, data };
+		return json;
+	}
 };
+
+export default useFetch;

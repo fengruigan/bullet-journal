@@ -23,7 +23,7 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 	// useEffect sets the date to be the date state passed from App component.
 	// whenever dateFromProps is changed.
 	useEffect(() => {
-		setDate(currentDate);
+		setDate(currentDate.clone());
 	}, [currentDate]);
 
 	// This function is used to render a custom calendar header
@@ -118,10 +118,10 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 		if (value.isSame(date, "month")) {
 			setRedirect(true);
 			setRedirectTarget(value.format("yyyy-MM-DD"));
-			onRedirect(value); // Calling onDateChange in App component
+			onRedirect(value.clone()); // Calling onDateChange in App component
 		}
 		// set date to be the selected date
-		setDate(value);
+		setDate(value.clone());
 	};
 
 	return (

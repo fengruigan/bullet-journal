@@ -1,35 +1,91 @@
 import React, { useState, useEffect } from "react";
-import CreateTask from "./createTask";
+import InputField from "./inputField";
 import Emoji from "../emoji";
 import {
 	LoadingOutlined,
 	LeftOutlined,
 	RightOutlined,
 } from "@ant-design/icons";
-import { Empty, List, Button, Col, Row, Typography } from "antd";
+import { Empty, List, Button, Col, Row, Typography, message } from "antd";
 import "../../css/journal/journal.css";
+import { ReactComponent as NetwrokError } from "../../custom/icons/network_error.svg";
+import { ReactComponent as EmptyCurrent } from "../../custom/icons/empty_current.svg";
+import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
 import moment from "moment";
 
 const Journal = ({ currentDate, onRedirect }) => {
-	let [todos, setTodos] = useState({ data: [], loading: true });
+	let [list, setList] = useState({ data: [], loading: true });
+	let [serverStatus, setServerStatus] = useState(500);
+
+	// this temp array is to store the newly created list items that have yet to send to DB
+	// and will be cleared as soon as the items are successfully sent
+	let [temp, setTemp] = useState([]);
+	const key = "save";
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
 			let urlDate = currentDate.format("yyyy-MM-DD");
-			const response = await fetch(
-				"http://localhost:8000/api/" + urlDate
-			);
+			let response;
+			try {
+				response = await fetch("http://localhost:8000/api/" + urlDate);
+			} catch {
+				response = null;
+				setServerStatus(504); // Marking connection error
+			}
+			if (response && response.status) {
+				setServerStatus(response.status);
+			}
 			let json;
 			try {
 				json = await response.json();
 			} catch {
 				json = [];
 			}
-			setTodos({ data: json, loading: false });
+			setList({ data: json, loading: false });
 		};
 		fetchData();
 	}, [currentDate]);
+
+	// This is used to post new list item to database
+	useEffect(() => {
+		if (temp.length === 0) {
+			console.log("journal is saved");
+		} else {
+			let json = JSON.stringify(temp);
+			const postData = async () => {
+				message.loading({ content: "Saving...", duration: 0, key });
+				let response;
+				try {
+					response = await fetch("http://localhost:8000/api/", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: json,
+					});
+				} catch {
+					response = null;
+				}
+				if (response && response.ok) {
+					message.success({
+						content: "Journal Saved!",
+						duration: 3,
+						key,
+					});
+					setTemp([]);
+				} else {
+					message.warning({
+						content: "Save failed",
+						duration: 3,
+						key,
+					});
+				}
+			};
+			postData();
+			console.log(temp);
+		}
+	}, [temp]);
 
 	// This renders the header of the journal page
 	const renderHeader = () => (
@@ -52,7 +108,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 				</Typography.Title>
 			</Col>
 			<Col span={5}>
-				{moment().isSame(currentDate, "day") ? null : (
+				{moment().isSameOrBefore(currentDate, "day") ? null : (
 					<Button
 						id="header-button-right"
 						onClick={() => {
@@ -69,12 +125,35 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// takes data and renders the list
 	const generateList = () => {
-		if (todos.data === null || todos.data.length === 0) {
-			return <Empty />;
+		if (list.data === null || list.data.length === 0) {
+			if (serverStatus === 504) {
+				return (
+					<Empty
+						image={<NetwrokError />}
+						description="Oops! There seems to a network error"
+					/>
+				);
+			} else if (serverStatus === 404) {
+				return (
+					<Empty image={<NetwrokError />} description="Not found" />
+				);
+			} else {
+				return moment().isSame(currentDate, "day") ? (
+					<Empty
+						image={<EmptyCurrent />}
+						description="List is still empty. Write something below."
+					/>
+				) : (
+					<Empty
+						image={<EmptyPast />}
+						description="Nothing on the list for this date"
+					/>
+				);
+			}
 		} else {
 			return (
 				<List
-					dataSource={todos.data}
+					dataSource={list.data}
 					renderItem={(item) => (
 						<List.Item>
 							<List.Item.Meta
@@ -90,19 +169,28 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// This function creates new list item from input field
 	const addToList = (item) => {
-		// let list = [...todos.data];
-		// let json = JSON.stringify({ data: item });
-		// fetch("http://localhost:8000/api", {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"Content-Type": "application/json",
-		// 	},
-		// 	body: json,
-		// });
-		// let listItem = { content: item };
-		let list = [...todos.data, item];
-		setTodos({ data: list, loading: false });
-		console.log("posting " + item);
+		let postItem = { ...item };
+		postItem.date = currentDate.format("yyyy-MM-DD");
+		let newList = [...list.data, item];
+		let newTemp = [...temp, postItem];
+		setList({ data: newList, loading: false });
+		setTemp(newTemp);
+		// message.warning("Journal save failed", 0);
+		// let i = 5;
+		// let key = "save";
+		// const waitTimer = setInterval(() => {
+		// 	message.warning({
+		// 		content: "Retrying in " + i + " seconds",
+		// 		duration: 0,
+		// 		key,
+		// 	});
+		// 	i--;
+		// 	console.log("timer tick");
+		// }, 1000);
+		// setTimeout(() => {
+		// 	clearInterval(waitTimer);
+		// 	message.loading({ content: "Saving...", duration: 1, key });
+		// }, (i + 1) * 1000);
 	};
 
 	const handleClick = () => {
@@ -114,7 +202,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 			{renderHeader()}
 			<hr className="wide-divider" />
 			<div className="todo-list">
-				{todos.loading ? (
+				{list.loading ? (
 					<LoadingOutlined
 						style={{
 							display: "flex",
@@ -130,23 +218,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 			</div>
 
 			{/* This may be renamed into something else */}
-			{/* <form
-				onSubmit={(e) => {
-					e.preventDefault();
-					// handleSubmit();
-					// addToList("hi");
-					// console.log("form submitted");
-				}}
-			> */}
-			<CreateTask handleClick={handleClick} onSubmit={addToList} />
-			{/* </form> */}
-
-			{/* Currently I am thinking of building one large list instead of two */}
-
-			{/* <div className="divider"></div>
-			<div className="general-list">
-				<h5>Note</h5>
-			</div> */}
+			{moment().isSame(currentDate, "day") ? (
+				<InputField handleClick={handleClick} onSubmit={addToList} />
+			) : null}
 		</div>
 	);
 };

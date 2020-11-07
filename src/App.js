@@ -8,7 +8,7 @@ import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
 import "./css/App.css";
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 class APP extends Component {
 	state = {
@@ -57,6 +57,7 @@ class APP extends Component {
 									render={() => (
 										<Journal
 											currentDate={this.state.currentDate}
+											onRedirect={this.onDateChange}
 										/>
 									)}
 								/>
@@ -73,14 +74,6 @@ class APP extends Component {
 							</Switch>
 						</Content>
 					</Layout>
-					<Footer
-						style={{
-							textAlign: "center",
-							backgroundColor: "white",
-						}}
-					>
-						Fengrui Gan ©2020
-					</Footer>
 				</Layout>
 			</Router>
 		);

@@ -25,7 +25,7 @@ const types = [
 	},
 ];
 
-const CreateTask = ({ handleClick, onSubmit }) => {
+const InputField = ({ handleClick, onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
 	let [type, setType] = useState("✅");
 	const [form] = Form.useForm();
@@ -89,17 +89,21 @@ const CreateTask = ({ handleClick, onSubmit }) => {
 					json.type = type;
 					onSubmit(json);
 					onReset();
-					console.log(json);
 				}}
 			>
-				<Form.Item name="content">
+				<Form.Item
+					name="content"
+					rules={[
+						{
+							required: "true",
+							message: "Please write down your notes here",
+						},
+					]}
+				>
 					<Input
 						size="large"
 						onClick={() => {
 							handleClick();
-						}}
-						onSubmit={() => {
-							console.log("hi");
 						}}
 						addonBefore={listType}
 						placeholder="Jot down your note here"
@@ -115,4 +119,4 @@ const CreateTask = ({ handleClick, onSubmit }) => {
 	);
 };
 
-export default CreateTask;
+export default InputField;
