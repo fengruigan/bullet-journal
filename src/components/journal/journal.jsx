@@ -125,17 +125,19 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// takes data and renders the list
 	const generateList = () => {
-		if (serverStatus === 504) {
-			return (
-				<Empty
-					image={<NetwrokError />}
-					description="Oops! There seems to a network error"
-				/>
-			);
-		} else if (serverStatus === 404) {
-			return <Empty image={<NetwrokError />} description="Not found" />;
-		} else {
-			if (list.data === null || list.data.length === 0) {
+		if (list.data === null || list.data.length === 0) {
+			if (serverStatus === 504) {
+				return (
+					<Empty
+						image={<NetwrokError />}
+						description="Oops! There seems to a network error"
+					/>
+				);
+			} else if (serverStatus === 404) {
+				return (
+					<Empty image={<NetwrokError />} description="Not found" />
+				);
+			} else {
 				return moment().isSame(currentDate, "day") ? (
 					<Empty
 						image={<EmptyCurrent />}
@@ -147,21 +149,21 @@ const Journal = ({ currentDate, onRedirect }) => {
 						description="Nothing on the list for this date"
 					/>
 				);
-			} else {
-				return (
-					<List
-						dataSource={list.data}
-						renderItem={(item) => (
-							<List.Item>
-								<List.Item.Meta
-									avatar={<Emoji symbol={item.type} />}
-									description={item.content}
-								/>
-							</List.Item>
-						)}
-					></List>
-				);
 			}
+		} else {
+			return (
+				<List
+					dataSource={list.data}
+					renderItem={(item) => (
+						<List.Item>
+							<List.Item.Meta
+								avatar={<Emoji symbol={item.type} />}
+								description={item.content}
+							/>
+						</List.Item>
+					)}
+				></List>
+			);
 		}
 	};
 
