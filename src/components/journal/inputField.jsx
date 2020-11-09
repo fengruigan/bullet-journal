@@ -25,7 +25,7 @@ const types = [
 	},
 ];
 
-const InputField = ({ handleClick, onSubmit }) => {
+const InputField = ({ onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
 	let [type, setType] = useState("✅");
 	const [form] = Form.useForm();
@@ -102,9 +102,6 @@ const InputField = ({ handleClick, onSubmit }) => {
 				>
 					<Input
 						size="large"
-						onClick={() => {
-							handleClick();
-						}}
 						addonBefore={listType}
 						placeholder="Jot down your note here"
 					/>
