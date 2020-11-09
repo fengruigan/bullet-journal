@@ -193,6 +193,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		let newTemp = [...temp, postItem];
 		setList({ data: newList, loading: false });
 		setTemp(newTemp);
+		saveWaitRef.current = 5;
 	};
 
 	return (
