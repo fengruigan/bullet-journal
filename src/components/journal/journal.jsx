@@ -20,9 +20,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 	// this temp array is to store the newly created list items that have yet to send to DB
 	// and will be cleared as soon as the items are successfully sent
 	let [temp, setTemp] = useState([]);
+
 	const key = "save";
-	let saveWaitRef = useRef(5);
-	let saveRetryRef = useRef({ timer: null, timeout: null });
+	let saveRef = useRef({ time: 5, timer: null, timeout: null });
 	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
@@ -72,17 +72,17 @@ const Journal = ({ currentDate, onRedirect }) => {
 						duration: 3,
 						key,
 					});
-					saveWaitRef.current = 5;
+					saveRef.current.time = 5;
 					setTemp([]);
 				} else {
 					// wait for some amount of time then retry
-					if (saveRetryRef.current.timer) {
-						clearInterval(saveRetryRef.current.timer);
-						clearTimeout(saveRetryRef.current.timeout);
+					if (saveRef.current.timer) {
+						clearInterval(saveRef.current.timer);
+						clearTimeout(saveRef.current.timeout);
 					}
-					let tic = saveWaitRef.current;
-					saveWaitRef.current = Math.floor(tic * 1.5);
-					saveRetryRef.current.timer = setInterval(() => {
+					let tic = saveRef.current.time;
+					saveRef.current.time = Math.floor(tic * 1.5);
+					saveRef.current.timer = setInterval(() => {
 						message.warning({
 							content:
 								"Saving failed. Retrying in " +
@@ -93,11 +93,12 @@ const Journal = ({ currentDate, onRedirect }) => {
 						});
 						tic--;
 					}, 1000);
-					saveRetryRef.current.timeout = setTimeout(() => {
+					saveRef.current.timeout = setTimeout(() => {
 						let refresh = [...temp];
 						setTemp(refresh);
-						clearInterval(saveRetryRef.current.timer);
-						saveRetryRef.current = { timer: null, timeout: null };
+						clearInterval(saveRef.current.timer);
+						saveRef.current.timer = null;
+						saveRef.current.timeout = null;
 					}, (tic + 1) * 1000);
 				}
 			};
@@ -193,7 +194,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		let newTemp = [...temp, postItem];
 		setList({ data: newList, loading: false });
 		setTemp(newTemp);
-		saveWaitRef.current = 5;
+		saveRef.current.time = 5;
 	};
 
 	return (
