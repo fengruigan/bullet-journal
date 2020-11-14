@@ -176,7 +176,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 					renderItem={(item) => (
 						<List.Item>
 							<List.Item.Meta
-								avatar={<Emoji symbol={item.type} />}
+								avatar={<Emoji symbol={item.category} />}
 								description={item.content}
 							/>
 						</List.Item>

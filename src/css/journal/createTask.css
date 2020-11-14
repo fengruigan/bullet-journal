@@ -1,11 +1,11 @@
-.type-grid {
+.category-grid {
 	width: 20%;
 	text-align: center;
 	padding: 6px;
 	max-width: 5.5em;
 }
 
-.type-description {
+.category-description {
 	text-align: center;
 	color: gray;
 	margin-bottom: 0;
@@ -13,7 +13,7 @@
 	text-overflow: ellipsis;
 }
 
-.type-new {
+.category-new {
 	color: rgba(0, 0, 0, 0.3);
 	font-size: 2em;
 	padding-top: 0.075em;

@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from "react";
 import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
-import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
+import { Input, Popover, Card, Tooltip, Form, Button, Modal } from "antd";
 import Emoji from "../emoji";
 import "../../css/journal/createTask.css";
 
-// This is the list of LIST types users can create. Later on this will be fetched from user data
-const types = [
+// This is the list of LIST categories users can create. Later on this will be fetched from user data
+const categories = [
 	{ content: "Todo", icon: <SmileFilled />, emoji: "✅" },
 	{
 		content: "Thought",
@@ -27,7 +27,8 @@ const types = [
 
 const InputField = ({ onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
-	let [type, setType] = useState("✅");
+	let [category, setCategory] = useState("✅");
+	let [modalVisible, setModalVisible] = useState(false);
 	const [form] = Form.useForm();
 
 	const onReset = () => {
@@ -37,14 +38,14 @@ const InputField = ({ onSubmit }) => {
 	// content to go into the popover
 	const popContent = (
 		<Card>
-			{/* The list of LIST types */}
-			{types.map((item, index) => {
+			{/* The list of LIST categories */}
+			{categories.map((item, index) => {
 				return (
 					<Card.Grid
-						className="type-grid"
+						className="category-grid"
 						key={index}
 						onClick={() => {
-							setType(item.emoji);
+							setCategory(item.emoji);
 						}}
 					>
 						<Tooltip
@@ -56,14 +57,19 @@ const InputField = ({ onSubmit }) => {
 								{item.emoji}
 							</div>
 						</Tooltip>
-						<p className="type-description">{item.content}</p>
+						<p className="category-description">{item.content}</p>
 					</Card.Grid>
 				);
 			})}
-			{/* This will be the new type button */}
-			<Card.Grid className="type-grid">
+			{/* This will be the new category button */}
+			<Card.Grid
+				className="category-grid"
+				onClick={() => {
+					setModalVisible(true);
+				}}
+			>
 				<Tooltip title={"Add new tag"} placement={"top"}>
-					<div className="type-new">
+					<div className="category-new">
 						<PlusOutlined />
 					</div>
 				</Tooltip>
@@ -71,10 +77,10 @@ const InputField = ({ onSubmit }) => {
 		</Card>
 	);
 
-	const listType = (
+	const listCategory = (
 		<Popover content={popContent} trigger={"click"} placement={"bottom"}>
 			<span style={{ padding: "0", fontSize: "1.5em" }}>
-				<Emoji symbol={type} />
+				<Emoji symbol={category} />
 			</span>
 		</Popover>
 	);
@@ -86,7 +92,7 @@ const InputField = ({ onSubmit }) => {
 				form={form}
 				onFinish={(values) => {
 					let json = { ...values };
-					json.type = type;
+					json.category = category;
 					onSubmit(json);
 					onReset();
 				}}
@@ -102,7 +108,7 @@ const InputField = ({ onSubmit }) => {
 				>
 					<Input
 						size="large"
-						addonBefore={listType}
+						addonBefore={listCategory}
 						placeholder="Jot down your note here"
 					/>
 				</Form.Item>
@@ -112,6 +118,20 @@ const InputField = ({ onSubmit }) => {
 					</Button>
 				</Form.Item>
 			</Form>
+			<Modal
+				visible={modalVisible}
+				title={"Define your own note category"}
+				centered={true}
+				zIndex={9999}
+				onOk={() => {
+					setModalVisible(false);
+					console.log("modal ok");
+				}}
+				onCancel={() => {
+					setModalVisible(false);
+					console.log("modal cancle");
+				}}
+			></Modal>
 		</Fragment>
 	);
 };
