@@ -1,28 +1,17 @@
 import React, { Fragment, useState } from "react";
-import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
-import { Input, Popover, Card, Tooltip, Form, Button, Modal } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
 import Emoji from "../emoji";
+import CategoryModal from "./categoryModal";
 import "../../css/journal/createTask.css";
 
 // This is the list of LIST categories users can create. Later on this will be fetched from user data
 const categories = [
-	{ content: "Todo", icon: <SmileFilled />, emoji: "✅" },
-	{
-		content: "Thought",
-		icon: <SettingOutlined />,
-		emoji: <Emoji symbol={"🤓"} />,
-	},
-	{ content: "Note", icon: <SmileFilled />, emoji: "✏️" },
-	{
-		content: "Miscellaneous",
-		icon: <SettingOutlined />,
-		emoji: "🧸",
-	},
-	{
-		content: "Misc.",
-		icon: <SettingOutlined />,
-		emoji: "📌",
-	},
+	{ category: "Todo", emoji: "✅" },
+	{ category: "Thought", emoji: "🤓" },
+	{ category: "Note", emoji: "✏️" },
+	{ category: "Miscellaneous", emoji: "🧸" },
+	{ category: "Misc.", emoji: "📌" },
 ];
 
 const InputField = ({ onSubmit }) => {
@@ -49,15 +38,17 @@ const InputField = ({ onSubmit }) => {
 						}}
 					>
 						<Tooltip
-							title={item.content}
-							placement={"top"}
+							title={item.category}
+							placement="top"
 							arrowPointAtCenter={true}
 						>
 							<div style={{ fontSize: "1.3em", marginBottom: 0 }}>
-								{item.emoji}
+								<span style={{ padding: "0" }}>
+									<Emoji symbol={item.emoji} />
+								</span>
 							</div>
 						</Tooltip>
-						<p className="category-description">{item.content}</p>
+						<p className="category-description">{item.category}</p>
 					</Card.Grid>
 				);
 			})}
@@ -107,7 +98,8 @@ const InputField = ({ onSubmit }) => {
 					]}
 				>
 					<Input
-						size="large"
+						size={"large"}
+						allowClear={true}
 						addonBefore={listCategory}
 						placeholder="Jot down your note here"
 					/>
@@ -118,20 +110,12 @@ const InputField = ({ onSubmit }) => {
 					</Button>
 				</Form.Item>
 			</Form>
-			<Modal
-				visible={modalVisible}
-				title={"Define your own note category"}
-				centered={true}
-				zIndex={9999}
-				onOk={() => {
-					setModalVisible(false);
-					console.log("modal ok");
-				}}
-				onCancel={() => {
-					setModalVisible(false);
-					console.log("modal cancle");
-				}}
-			></Modal>
+
+			{/* Modal for customizing list category */}
+			<CategoryModal
+				modalVisible={modalVisible}
+				setModalVisible={setModalVisible}
+			/>
 		</Fragment>
 	);
 };
