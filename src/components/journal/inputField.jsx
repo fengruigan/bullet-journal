@@ -1,33 +1,23 @@
 import React, { Fragment, useState } from "react";
-import { SettingOutlined, SmileFilled, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
 import Emoji from "../emoji";
+import CategoryModal from "./categoryModal";
 import "../../css/journal/createTask.css";
 
-// This is the list of LIST types users can create. Later on this will be fetched from user data
-const types = [
-	{ content: "Todo", icon: <SmileFilled />, emoji: "✅" },
-	{
-		content: "Thought",
-		icon: <SettingOutlined />,
-		emoji: <Emoji symbol={"🤓"} />,
-	},
-	{ content: "Note", icon: <SmileFilled />, emoji: "✏️" },
-	{
-		content: "Miscellaneous",
-		icon: <SettingOutlined />,
-		emoji: "🧸",
-	},
-	{
-		content: "Misc.",
-		icon: <SettingOutlined />,
-		emoji: "📌",
-	},
+// This is the list of LIST categories users can create. Later on this will be fetched from user data
+const categories = [
+	{ category: "Todo", emoji: "✅" },
+	{ category: "Thought", emoji: "🤓" },
+	{ category: "Note", emoji: "✏️" },
+	{ category: "Miscellaneous", emoji: "🧸" },
+	{ category: "Misc.", emoji: "📌" },
 ];
 
-const InputField = ({ handleClick, onSubmit }) => {
+const InputField = ({ onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
-	let [type, setType] = useState("✅");
+	let [category, setCategory] = useState("✅");
+	let [modalVisible, setModalVisible] = useState(false);
 	const [form] = Form.useForm();
 
 	const onReset = () => {
@@ -37,33 +27,40 @@ const InputField = ({ handleClick, onSubmit }) => {
 	// content to go into the popover
 	const popContent = (
 		<Card>
-			{/* The list of LIST types */}
-			{types.map((item, index) => {
+			{/* The list of LIST categories */}
+			{categories.map((item, index) => {
 				return (
 					<Card.Grid
-						className="type-grid"
+						className="category-grid"
 						key={index}
 						onClick={() => {
-							setType(item.emoji);
+							setCategory(item.emoji);
 						}}
 					>
 						<Tooltip
-							title={item.content}
-							placement={"top"}
+							title={item.category}
+							placement="top"
 							arrowPointAtCenter={true}
 						>
 							<div style={{ fontSize: "1.3em", marginBottom: 0 }}>
-								{item.emoji}
+								<span style={{ padding: "0" }}>
+									<Emoji symbol={item.emoji} />
+								</span>
 							</div>
 						</Tooltip>
-						<p className="type-description">{item.content}</p>
+						<p className="category-description">{item.category}</p>
 					</Card.Grid>
 				);
 			})}
-			{/* This will be the new type button */}
-			<Card.Grid className="type-grid">
+			{/* This will be the new category button */}
+			<Card.Grid
+				className="category-grid"
+				onClick={() => {
+					setModalVisible(true);
+				}}
+			>
 				<Tooltip title={"Add new tag"} placement={"top"}>
-					<div className="type-new">
+					<div className="category-new">
 						<PlusOutlined />
 					</div>
 				</Tooltip>
@@ -71,10 +68,10 @@ const InputField = ({ handleClick, onSubmit }) => {
 		</Card>
 	);
 
-	const listType = (
+	const listCategory = (
 		<Popover content={popContent} trigger={"click"} placement={"bottom"}>
 			<span style={{ padding: "0", fontSize: "1.5em" }}>
-				<Emoji symbol={type} />
+				<Emoji symbol={category} />
 			</span>
 		</Popover>
 	);
@@ -86,7 +83,7 @@ const InputField = ({ handleClick, onSubmit }) => {
 				form={form}
 				onFinish={(values) => {
 					let json = { ...values };
-					json.type = type;
+					json.category = category;
 					onSubmit(json);
 					onReset();
 				}}
@@ -101,11 +98,9 @@ const InputField = ({ handleClick, onSubmit }) => {
 					]}
 				>
 					<Input
-						size="large"
-						onClick={() => {
-							handleClick();
-						}}
-						addonBefore={listType}
+						size={"large"}
+						allowClear={true}
+						addonBefore={listCategory}
 						placeholder="Jot down your note here"
 					/>
 				</Form.Item>
@@ -115,6 +110,12 @@ const InputField = ({ handleClick, onSubmit }) => {
 					</Button>
 				</Form.Item>
 			</Form>
+
+			{/* Modal for customizing list category */}
+			<CategoryModal
+				modalVisible={modalVisible}
+				setModalVisible={setModalVisible}
+			/>
 		</Fragment>
 	);
 };

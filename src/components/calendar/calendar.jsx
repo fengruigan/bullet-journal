@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Calendar, Select, Col, Row, Radio, Button } from "antd";
 import { Redirect } from "react-router-dom";
 import { ReloadOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 	// This is a wrapper for ant design Calendar component.
@@ -129,6 +130,10 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 			{/* Page will redirect if redirect is true */}
 			{redirect && <Redirect to={"/" + redirectTarget} />}
 			<Calendar
+				disabledDate={(date) => {
+					if (moment().isSameOrAfter(date, "day")) return false;
+					else return true;
+				}}
 				fullscreen={true}
 				headerRender={headerRender}
 				value={date}

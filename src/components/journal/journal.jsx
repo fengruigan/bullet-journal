@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InputField from "./inputField";
 import Emoji from "../emoji";
 import {
@@ -20,8 +20,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 	// this temp array is to store the newly created list items that have yet to send to DB
 	// and will be cleared as soon as the items are successfully sent
 	let [temp, setTemp] = useState([]);
-	const key = "save";
 
+	const key = "save";
+	let saveRef = useRef({ time: 5, timer: null, timeout: null });
 	// This is be used to fetch user list from database
 	useEffect(() => {
 		const fetchData = async () => {
@@ -49,9 +50,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	// This is used to post new list item to database
 	useEffect(() => {
-		if (temp.length === 0) {
-			console.log("journal is saved");
-		} else {
+		if (temp.length !== 0) {
 			let json = JSON.stringify(temp);
 			const postData = async () => {
 				message.loading({ content: "Saving...", duration: 0, key });
@@ -73,19 +72,39 @@ const Journal = ({ currentDate, onRedirect }) => {
 						duration: 3,
 						key,
 					});
+					saveRef.current.time = 5;
 					setTemp([]);
 				} else {
-					message.warning({
-						content: "Save failed",
-						duration: 3,
-						key,
-					});
+					// wait for some amount of time then retry
+					if (saveRef.current.timer) {
+						clearInterval(saveRef.current.timer);
+						clearTimeout(saveRef.current.timeout);
+					}
+					let tic = saveRef.current.time;
+					saveRef.current.time = Math.floor(tic * 1.5);
+					saveRef.current.timer = setInterval(() => {
+						message.warning({
+							content:
+								"Saving failed. Retrying in " +
+								tic +
+								" seconds...",
+							duration: 0,
+							key,
+						});
+						tic--;
+					}, 1000);
+					saveRef.current.timeout = setTimeout(() => {
+						let refresh = [...temp];
+						setTemp(refresh);
+						clearInterval(saveRef.current.timer);
+						saveRef.current.timer = null;
+						saveRef.current.timeout = null;
+					}, (tic + 1) * 1000);
 				}
 			};
 			postData();
-			console.log(temp);
 		}
-	}, [temp]);
+	}, [temp, setTemp]);
 
 	// This renders the header of the journal page
 	const renderHeader = () => (
@@ -157,7 +176,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 					renderItem={(item) => (
 						<List.Item>
 							<List.Item.Meta
-								avatar={<Emoji symbol={item.type} />}
+								avatar={<Emoji symbol={item.category} />}
 								description={item.content}
 							/>
 						</List.Item>
@@ -175,26 +194,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		let newTemp = [...temp, postItem];
 		setList({ data: newList, loading: false });
 		setTemp(newTemp);
-		// message.warning("Journal save failed", 0);
-		// let i = 5;
-		// let key = "save";
-		// const waitTimer = setInterval(() => {
-		// 	message.warning({
-		// 		content: "Retrying in " + i + " seconds",
-		// 		duration: 0,
-		// 		key,
-		// 	});
-		// 	i--;
-		// 	console.log("timer tick");
-		// }, 1000);
-		// setTimeout(() => {
-		// 	clearInterval(waitTimer);
-		// 	message.loading({ content: "Saving...", duration: 1, key });
-		// }, (i + 1) * 1000);
-	};
-
-	const handleClick = () => {
-		console.log("input clicked");
+		saveRef.current.time = 5;
 	};
 
 	return (
@@ -219,7 +219,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 			{/* This may be renamed into something else */}
 			{moment().isSame(currentDate, "day") ? (
-				<InputField handleClick={handleClick} onSubmit={addToList} />
+				<InputField onSubmit={addToList} />
 			) : null}
 		</div>
 	);
