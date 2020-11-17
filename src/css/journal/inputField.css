@@ -1,0 +1,22 @@
+.category-grid {
+	width: 20%;
+	text-align: center;
+	padding: 6px;
+	max-width: 5.5em;
+}
+
+.category-description {
+	text-align: center;
+	color: gray;
+	margin-bottom: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.category-new {
+	color: rgba(0, 0, 0, 0.3);
+	font-size: 2em;
+	padding-top: 0.075em;
+	padding-bottom: 0.075em;
+	border: 1px dashed rgba(0, 0, 0, 0.3);
+}
