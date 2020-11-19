@@ -3,21 +3,21 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
 import Emoji from "../emoji";
 import CategoryModal from "./categoryModal";
-import "../../css/journal/createTask.css";
-
-// This is the list of LIST categories users can create. Later on this will be fetched from user data
-const categories = [
-	{ category: "Todo", emoji: "✅" },
-	{ category: "Thought", emoji: "🤓" },
-	{ category: "Note", emoji: "✏️" },
-	{ category: "Miscellaneous", emoji: "🧸" },
-	{ category: "Misc.", emoji: "📌" },
-];
+import "../../css/journal/inputField.css";
 
 const InputField = ({ onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
 	let [category, setCategory] = useState("✅");
 	let [modalVisible, setModalVisible] = useState(false);
+
+	// This is the list of LIST categories users can create. Later on this will be fetched from user data
+	let [categories, setCategories] = useState([
+		{ category: "Todo", emoji: "✅" },
+		{ category: "Thought", emoji: "🤓" },
+		{ category: "Note", emoji: "✏️" },
+		{ category: "Miscellaneous", emoji: "🧸" },
+		{ category: "Misc.", emoji: "📌" },
+	]);
 	const [form] = Form.useForm();
 
 	const onReset = () => {
@@ -26,7 +26,20 @@ const InputField = ({ onSubmit }) => {
 
 	// content to go into the popover
 	const popContent = (
-		<Card>
+		<Card id="popover">
+			{/* This will be the new category button */}
+			<Card.Grid
+				className="category-grid"
+				onClick={() => {
+					setModalVisible(true);
+				}}
+			>
+				<Tooltip title={"Add new tag"} placement={"top"}>
+					<div className="category-new">
+						<PlusOutlined />
+					</div>
+				</Tooltip>
+			</Card.Grid>
 			{/* The list of LIST categories */}
 			{categories.map((item, index) => {
 				return (
@@ -52,19 +65,6 @@ const InputField = ({ onSubmit }) => {
 					</Card.Grid>
 				);
 			})}
-			{/* This will be the new category button */}
-			<Card.Grid
-				className="category-grid"
-				onClick={() => {
-					setModalVisible(true);
-				}}
-			>
-				<Tooltip title={"Add new tag"} placement={"top"}>
-					<div className="category-new">
-						<PlusOutlined />
-					</div>
-				</Tooltip>
-			</Card.Grid>
 		</Card>
 	);
 
@@ -113,8 +113,10 @@ const InputField = ({ onSubmit }) => {
 
 			{/* Modal for customizing list category */}
 			<CategoryModal
-				modalVisible={modalVisible}
+				visible={modalVisible}
 				setModalVisible={setModalVisible}
+				categories={categories}
+				setCategories={setCategories}
 			/>
 		</Fragment>
 	);
