@@ -66,6 +66,13 @@
 	}
 }
 
+@media (min-width: 1600px) {
+	.journal {
+		width: 45%;
+		min-height: 55rem;
+	}
+}
+
 @media (max-width: 991px) {
 	.journal {
 		min-height: 50rem;
