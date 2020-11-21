@@ -148,22 +148,29 @@ const Journal = ({ currentDate, onRedirect }) => {
 			if (serverStatus === 504) {
 				return (
 					<Empty
+						className="empty"
 						image={<NetwrokError />}
 						description="Oops! There seems to a network error"
 					/>
 				);
 			} else if (serverStatus === 404) {
 				return (
-					<Empty image={<NetwrokError />} description="Not found" />
+					<Empty
+						className="empty"
+						image={<NetwrokError />}
+						description="Not found"
+					/>
 				);
 			} else {
 				return moment().isSame(currentDate, "day") ? (
 					<Empty
+						className="empty"
 						image={<EmptyCurrent />}
 						description="List is still empty. Write something below."
 					/>
 				) : (
 					<Empty
+						className="empty"
 						image={<EmptyPast />}
 						description="Nothing on the list for this date"
 					/>

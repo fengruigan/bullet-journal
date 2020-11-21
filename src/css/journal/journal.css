@@ -7,6 +7,10 @@
 	margin: 0 auto;
 }
 
+.empty {
+	margin-bottom: 3em;
+}
+
 #header-button-left {
 	position: relative;
 	border: none;

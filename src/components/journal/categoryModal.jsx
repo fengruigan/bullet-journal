@@ -71,6 +71,32 @@ const CategoryModal = ({
 		setCategories(cat);
 	};
 
+	const onModify = (index, value) => {
+		let cat = [...categories];
+		value.default = false;
+		cat[index] = value;
+		// post value to db
+		setCategories(cat);
+		setFormIndex(-1);
+		onReset();
+	};
+
+	const onCreate = (value) => {
+		// post value to db
+		let cat = [...categories];
+		value.default = false;
+		cat.push(value);
+		setCategories(cat);
+		onReset();
+	};
+
+	const closeModal = () => {
+		onReset();
+		setFormIndex(-1);
+		setShowForm(false);
+		setModalVisible(false);
+	};
+
 	const generateContent = () => {
 		return (
 			<List
@@ -129,7 +155,7 @@ const CategoryModal = ({
 		return (
 			<Form form={form} id="form">
 				<Input.Group>
-					<Row gutter={7}>
+					<Row gutter={7} id="first-row-inputs">
 						<Col span={8}>
 							<Form.Item
 								name="emoji"
@@ -220,30 +246,6 @@ const CategoryModal = ({
 				</Input.Group>
 			</Form>
 		);
-	};
-
-	const onModify = (index, value) => {
-		let cat = [...categories];
-		cat[index] = value;
-		// post value to db
-		setCategories(cat);
-		setFormIndex(-1);
-		onReset();
-	};
-
-	const onCreate = (value) => {
-		// post value to db
-		let cat = [...categories];
-		cat.push(value);
-		setCategories(cat);
-		onReset();
-	};
-
-	const closeModal = () => {
-		onReset();
-		setFormIndex(-1);
-		setShowForm(false);
-		setModalVisible(false);
 	};
 
 	return (

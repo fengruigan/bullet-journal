@@ -11,13 +11,13 @@
 	padding-top: 2em;
 }
 
-#form-confirm {
+/* #form-confirm {
 	background-color: #b7eb8f;
 }
 
 #form-cancel {
 	background-color: white;
-}
+} */
 
 @media (max-width: 999px) {
 	.actions {

@@ -1,13 +1,14 @@
 import React, { Fragment, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Input, Popover, Card, Tooltip, Form, Button } from "antd";
+import { Input, Popover, Card, Tooltip, Form, Button, Row, Col } from "antd";
 import Emoji from "../emoji";
 import CategoryModal from "./categoryModal";
 import "../../css/journal/inputField.css";
 
 const InputField = ({ onSubmit }) => {
 	// Sets the state for the input, I might need a reducer
-	let [category, setCategory] = useState("✅");
+	let [categoryIndex, setCategoryIndex] = useState(0);
+	// let [addDate, setAddDate] = useState(false);
 	let [modalVisible, setModalVisible] = useState(false);
 
 	// This is the list of LIST categories users can create. Later on this will be fetched from user data
@@ -15,7 +16,10 @@ const InputField = ({ onSubmit }) => {
 		{ category: "Todo", emoji: "✅" },
 		{ category: "Thought", emoji: "🤓" },
 		{ category: "Note", emoji: "✏️" },
-		{ category: "Miscellaneous", emoji: "🧸" },
+		{
+			category: "Miscellaneous",
+			emoji: "🧸",
+		},
 		{ category: "Misc.", emoji: "📌" },
 	]);
 	const [form] = Form.useForm();
@@ -47,7 +51,7 @@ const InputField = ({ onSubmit }) => {
 						className="category-grid"
 						key={index}
 						onClick={() => {
-							setCategory(item.emoji);
+							setCategoryIndex(index);
 						}}
 					>
 						<Tooltip
@@ -71,7 +75,7 @@ const InputField = ({ onSubmit }) => {
 	const listCategory = (
 		<Popover content={popContent} trigger={"click"} placement={"bottom"}>
 			<span style={{ padding: "0", fontSize: "1.5em" }}>
-				<Emoji symbol={category} />
+				<Emoji symbol={categories[categoryIndex].emoji} />
 			</span>
 		</Popover>
 	);
@@ -83,32 +87,48 @@ const InputField = ({ onSubmit }) => {
 				form={form}
 				onFinish={(values) => {
 					let json = { ...values };
-					json.category = category;
+					json.category = categories[categoryIndex].emoji;
 					onSubmit(json);
 					onReset();
 				}}
 			>
-				<Form.Item
-					name="content"
-					rules={[
-						{
-							required: "true",
-							message: "Please write down your notes here",
-						},
-					]}
-				>
-					<Input
-						size={"large"}
-						allowClear={true}
-						addonBefore={listCategory}
-						placeholder="Jot down your note here"
-					/>
-				</Form.Item>
-				<Form.Item>
-					<Button type="primary" htmlType="submit">
-						Add to list
-					</Button>
-				</Form.Item>
+				<Input.Group>
+					<Row>
+						<Col>
+							<Form.Item
+								name="content"
+								rules={[
+									{
+										required: "true",
+										message:
+											"Please write down your notes here",
+									},
+								]}
+							>
+								<Input
+									style={{
+										paddingLeft: "0.7em",
+									}}
+									size={"large"}
+									allowClear={true}
+									addonBefore={listCategory}
+									placeholder="Jot down your note here"
+								/>
+							</Form.Item>
+						</Col>
+						<Col>
+							<Form.Item>
+								<Button
+									type="primary"
+									htmlType="submit"
+									size="large"
+								>
+									Add
+								</Button>
+							</Form.Item>
+						</Col>
+					</Row>
+				</Input.Group>
 			</Form>
 
 			{/* Modal for customizing list category */}
