@@ -7,6 +7,7 @@ import {
 	CheckOutlined,
 	PlusOutlined,
 	RollbackOutlined,
+	InfoCircleOutlined,
 } from "@ant-design/icons";
 import emojiRegex from "emoji-regex/RGI_Emoji";
 import Emoji from "../emoji";
@@ -104,35 +105,76 @@ const CategoryModal = ({
 				renderItem={(item, index) =>
 					index !== formIndex ? (
 						<List.Item
-							actions={[
-								<EditOutlined
-									className="actions"
-									style={{
-										color: "orange",
-									}}
-									onClick={() => {
-										setFormIndex(index);
-										form.setFields([
-											{
-												name: "emoji",
-												value: item.emoji,
-											},
-											{
-												name: "category",
-												value: item.category,
-											},
-										]);
-										setShowForm(false);
-									}}
-								/>,
-								<CloseOutlined
-									className="actions"
-									style={{ color: "red" }}
-									onClick={() => {
-										removeCategory(index);
-									}}
-								/>,
-							]}
+							actions={
+								index !== 0
+									? [
+											<EditOutlined
+												className="actions"
+												style={{
+													color: "orange",
+												}}
+												onClick={() => {
+													setFormIndex(index);
+													form.setFields([
+														{
+															name: "emoji",
+															value: item.emoji,
+														},
+														{
+															name: "category",
+															value:
+																item.category,
+														},
+													]);
+													setShowForm(false);
+												}}
+											/>,
+											<CloseOutlined
+												className="actions"
+												style={{ color: "red" }}
+												onClick={() => {
+													removeCategory(index);
+												}}
+											/>,
+									  ]
+									: [
+											<EditOutlined
+												className="actions"
+												style={{
+													color: "orange",
+												}}
+												onClick={() => {
+													setFormIndex(index);
+													form.setFields([
+														{
+															name: "emoji",
+															value: item.emoji,
+														},
+														{
+															name: "category",
+															value:
+																item.category,
+														},
+													]);
+													setShowForm(false);
+												}}
+											/>,
+											<Tooltip
+												title="Items of this category will be auto generated
+                                                 on the next journal page if not marked as complete"
+												overlayStyle={{
+													zIndex: 9999,
+												}}
+												placement="topRight"
+												arrowPointAtCenter
+											>
+												<InfoCircleOutlined
+													className="actions"
+													style={{ color: "#40a9ff" }}
+												/>
+											</Tooltip>,
+									  ]
+							}
 						>
 							<List.Item.Meta
 								avatar={
