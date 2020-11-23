@@ -1,0 +1,26 @@
+.actions {
+	font-size: 1.3em;
+}
+
+.ant-modal-body {
+	max-height: 30em;
+	overflow-y: scroll;
+}
+
+#form {
+	padding-top: 2em;
+}
+
+/* #form-confirm {
+	background-color: #b7eb8f;
+}
+
+#form-cancel {
+	background-color: white;
+} */
+
+@media (max-width: 999px) {
+	.actions {
+		font-size: 1.6em;
+	}
+}

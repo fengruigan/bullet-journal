@@ -7,6 +7,33 @@
 	margin: 0 auto;
 }
 
+.empty {
+	margin-bottom: 3em;
+}
+
+.divider {
+	margin-top: 1em;
+	border: 0;
+	height: 1px;
+	background: #333;
+	background-image: linear-gradient(to right, #ccc, #333, #ccc);
+}
+
+.wide-divider {
+	height: 12px;
+	border: 0;
+	box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+}
+
+.crossed-out {
+	color: grey;
+	text-decoration: line-through;
+}
+
+.ant-list-item-meta-description {
+	color: black;
+}
+
 #header-button-left {
 	position: relative;
 	border: none;
@@ -28,41 +55,45 @@
 	margin-bottom: 0.5rem;
 }
 
-.divider {
-	margin-top: 1em;
-	border: 0;
-	height: 1px;
-	background: #333;
-	background-image: linear-gradient(to right, #ccc, #333, #ccc);
+#list {
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
-.wide-divider {
-	height: 12px;
-	border: 0;
-	box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
-}
-.todo-list {
-	padding-left: 1.5rem;
-}
-.general-list {
-	padding-left: 1.5rem;
+#loading-circle {
+	display: flex;
+	justify-content: center;
+	font-size: 5em;
+	color: #69c0ff;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
 @media (min-width: 993px) {
 	.journal {
-		width: 50%;
-		height: 50rem;
+		width: 70%;
+		min-height: 35rem;
 	}
 }
 
 @media (min-width: 1440px) {
 	.journal {
 		width: 50%;
-		height: 40rem;
+		min-height: 44rem;
+	}
+}
+
+@media (min-width: 1600px) {
+	.journal {
+		width: 45%;
+		min-height: 55rem;
 	}
 }
 
 @media (max-width: 991px) {
+	.journal {
+		min-height: 50rem;
+	}
 	.date {
 		font-size: 2rem;
 		padding-top: 1rem;
@@ -70,5 +101,17 @@
 	}
 	.general-list {
 		padding-bottom: 10rem;
+	}
+}
+
+@media (max-width: 767px) {
+	.journal {
+		min-height: 20rem;
+	}
+}
+
+@media (max-width: 600px) {
+	.journal {
+		min-height: 28rem;
 	}
 }
