@@ -5,8 +5,19 @@ import {
 	LoadingOutlined,
 	LeftOutlined,
 	RightOutlined,
+	EllipsisOutlined,
 } from "@ant-design/icons";
-import { Empty, List, Button, Col, Row, Typography, message } from "antd";
+import {
+	Empty,
+	List,
+	Button,
+	Col,
+	Row,
+	Typography,
+	message,
+	Dropdown,
+	Menu,
+} from "antd";
 import "../../css/journal/journal.css";
 import { ReactComponent as NetwrokError } from "../../custom/icons/network_error.svg";
 import { ReactComponent as EmptyCurrent } from "../../custom/icons/empty_current.svg";
@@ -23,8 +34,10 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 	const key = "save";
 	let saveRef = useRef({ time: 5, timer: null, timeout: null });
+
 	// This is be used to fetch user list from database
 	useEffect(() => {
+		setList({ data: [], loading: true });
 		const fetchData = async () => {
 			let urlDate = currentDate.format("yyyy-MM-DD");
 			let response;
@@ -142,6 +155,57 @@ const Journal = ({ currentDate, onRedirect }) => {
 		</Row>
 	);
 
+	const listAction = (item, index) => {
+		return (
+			<Menu>
+				{item.hasOwnProperty("completed") ? (
+					<Menu.Item
+						key={"1"}
+						onClick={() => {
+							let lst = [...list.data];
+							lst[index].completed = !lst[index].completed;
+							setList({ data: lst, loading: false });
+						}}
+					>
+						{item.completed ? (
+							<div>Incomplete</div>
+						) : (
+							<div>Completed</div>
+						)}
+					</Menu.Item>
+				) : (
+					<Menu.Item
+						key={"1"}
+						onClick={() => {
+							let lst = [...list.data];
+							lst[index].crossed = !lst[index].crossed;
+							setList({ data: lst, loading: false });
+						}}
+					>
+						{item.crossed ? (
+							<div>Revert</div>
+						) : (
+							<div>Cross-out</div>
+						)}
+					</Menu.Item>
+				)}
+
+				<Menu.Item
+					key={"2"}
+					onClick={() => {
+						console.log("deleting " + index);
+						let lst = [...list.data].filter((el, idx) => {
+							return idx === index ? null : el;
+						});
+						setList({ data: lst, loading: false });
+					}}
+				>
+					<div>Delete</div>
+				</Menu.Item>
+			</Menu>
+		);
+	};
+
 	// takes data and renders the list
 	const generateList = () => {
 		if (list.data === null || list.data.length === 0) {
@@ -180,11 +244,31 @@ const Journal = ({ currentDate, onRedirect }) => {
 			return (
 				<List
 					dataSource={list.data}
-					renderItem={(item) => (
-						<List.Item>
+					renderItem={(item, index) => (
+						<List.Item
+							key={index}
+							actions={[
+								<Dropdown
+									overlay={listAction(item, index)}
+									trigger="click"
+								>
+									<EllipsisOutlined />
+								</Dropdown>,
+							]}
+						>
 							<List.Item.Meta
 								avatar={<Emoji symbol={item.category} />}
-								description={item.content}
+								description={
+									<div
+										className={
+											item.completed || item.crossed
+												? "crossed-out"
+												: ""
+										}
+									>
+										{item.content}
+									</div>
+								}
 							/>
 						</List.Item>
 					)}
@@ -208,17 +292,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 		<div className="journal">
 			{renderHeader()}
 			<hr className="wide-divider" />
-			<div className="todo-list">
+			<div id="list">
 				{list.loading ? (
-					<LoadingOutlined
-						style={{
-							display: "flex",
-							justifyContent: "center",
-							fontSize: "5em",
-							color: "#69c0ff",
-							marginBottom: "0.5em",
-						}}
-					/>
+					<LoadingOutlined id="loading-circle" />
 				) : (
 					generateList()
 				)}

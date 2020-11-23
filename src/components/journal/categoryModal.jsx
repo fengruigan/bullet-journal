@@ -62,7 +62,7 @@ const CategoryModal = ({
 	const generateTip = () => {
 		return navigator.appVersion.indexOf("Win") === -1
 			? "^ + ⌘ + space"
-			: "win key + period";
+			: "window key + period";
 	};
 
 	const removeCategory = (index) => {
@@ -74,7 +74,7 @@ const CategoryModal = ({
 
 	const onModify = (index, value) => {
 		let cat = [...categories];
-		value.default = false;
+		value.isTodo = false;
 		cat[index] = value;
 		// post value to db
 		setCategories(cat);
@@ -85,7 +85,7 @@ const CategoryModal = ({
 	const onCreate = (value) => {
 		// post value to db
 		let cat = [...categories];
-		value.default = false;
+		value.isTodo = false;
 		cat.push(value);
 		setCategories(cat);
 		onReset();
@@ -209,7 +209,6 @@ const CategoryModal = ({
 								]}
 							>
 								<Input
-									bordered={false}
 									placeholder="One emoji"
 									onChange={handleEmojiChange}
 									suffix={
@@ -248,7 +247,6 @@ const CategoryModal = ({
 								]}
 							>
 								<Input
-									bordered={false}
 									onChange={handleNameChange}
 									placeholder="Give a name"
 								/>

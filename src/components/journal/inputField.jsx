@@ -13,14 +13,15 @@ const InputField = ({ onSubmit }) => {
 
 	// This is the list of LIST categories users can create. Later on this will be fetched from user data
 	let [categories, setCategories] = useState([
-		{ category: "Todo", emoji: "✅" },
-		{ category: "Thought", emoji: "🤓" },
-		{ category: "Note", emoji: "✏️" },
+		{ category: "Todo", emoji: "✅", isTodo: true },
+		{ category: "Thought", emoji: "🤓", isTodo: false },
+		{ category: "Note", emoji: "✏️", isTodo: false },
 		{
 			category: "Miscellaneous",
 			emoji: "🧸",
+			isTodo: false,
 		},
-		{ category: "Misc.", emoji: "📌" },
+		{ category: "Misc.", emoji: "📌", isTodo: false },
 	]);
 	const [form] = Form.useForm();
 
@@ -48,6 +49,7 @@ const InputField = ({ onSubmit }) => {
 			{categories.map((item, index) => {
 				return (
 					<Tooltip
+						key={index}
 						title={item.category}
 						placement="top"
 						arrowPointAtCenter
@@ -93,9 +95,12 @@ const InputField = ({ onSubmit }) => {
 			<Form
 				form={form}
 				onFinish={(values) => {
-					let json = { ...values };
-					json.category = categories[categoryIndex].emoji;
-					onSubmit(json);
+					let listItem = { ...values };
+					listItem.category = categories[categoryIndex].emoji;
+					categories[categoryIndex].isTodo
+						? (listItem.completed = false)
+						: (listItem.crossed = false);
+					onSubmit(listItem);
 					onReset();
 				}}
 			>
@@ -119,15 +124,6 @@ const InputField = ({ onSubmit }) => {
 								allowClear={true}
 								addonBefore={listCategory}
 								placeholder="Jot down your note here"
-								// addonAfter={
-								// 	<span
-								// 		onClick={() => {
-								// 			form.submit();
-								// 		}}
-								// 	>
-								// 		Add
-								// 	</span>
-								// }
 							/>
 						</Form.Item>
 					</Col>
