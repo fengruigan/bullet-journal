@@ -1,5 +1,6 @@
 import React from "react";
 
+// This is a component to help include emojis into the page
 const Emoji = (props) => {
 	return (
 		<span

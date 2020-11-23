@@ -14,6 +14,7 @@ import Emoji from "../emoji";
 import "../../css/journal/categoryModal.css";
 import detectMobile from "../../util/detectMobile";
 
+// This is used to match emojis
 const regex = emojiRegex();
 
 const CategoryModal = ({
@@ -22,15 +23,21 @@ const CategoryModal = ({
 	categories,
 	setCategories,
 }) => {
+	// This keeps track of where the form will be placed
 	let [formIndex, setFormIndex] = useState(-1);
+	// Determines wheter or not to show the form
 	let [showForm, setShowForm] = useState(false);
+	// Ant-Design syntax
 	const [form] = Form.useForm();
+	// Used in handleEmojiChange
 	let emojiRef = useRef("");
 
+	// Resets form
 	const onReset = () => {
 		form.resetFields();
 	};
 
+	// This is used to make sure the emoji field only allows input of one emoji
 	const handleEmojiChange = (e) => {
 		const { value } = e.target;
 		let match;
@@ -46,6 +53,7 @@ const CategoryModal = ({
 		form.setFields([{ name: "emoji", value: emojiRef.current }]);
 	};
 
+	// This is used to filter out emoji in category field
 	const handleNameChange = (e) => {
 		const { value } = e.target;
 		let match;
@@ -59,12 +67,14 @@ const CategoryModal = ({
 		}
 	};
 
+	// Generates a tip for inputting emoji based on operating system
 	const generateTip = () => {
 		return navigator.appVersion.indexOf("Win") === -1
 			? "^ + ⌘ + space"
 			: "window key + period";
 	};
 
+	// Delete the category based on index
 	const removeCategory = (index) => {
 		let cat = [...categories].filter((el, idx) => {
 			return idx === index ? null : el;
@@ -72,6 +82,7 @@ const CategoryModal = ({
 		setCategories(cat);
 	};
 
+	// Modifies the categories list
 	const onModify = (index, value) => {
 		let cat = [...categories];
 		value.isTodo = false;
@@ -82,6 +93,7 @@ const CategoryModal = ({
 		onReset();
 	};
 
+	// Create new category in categories list
 	const onCreate = (value) => {
 		// post value to db
 		let cat = [...categories];
@@ -91,6 +103,7 @@ const CategoryModal = ({
 		onReset();
 	};
 
+	// Closes category modal
 	const closeModal = () => {
 		onReset();
 		setFormIndex(-1);
@@ -98,16 +111,21 @@ const CategoryModal = ({
 		setModalVisible(false);
 	};
 
+	// Generates content to display in modal
 	const generateContent = () => {
 		return (
 			<List
 				dataSource={categories}
 				renderItem={(item, index) =>
+					// Renders form at formIndex
 					index !== formIndex ? (
 						<List.Item
 							actions={
+								// First index is reserved for todo-type category
+								// Prevents users from deleting that category
 								index !== 0
 									? [
+											// For modifying category
 											<EditOutlined
 												className="actions"
 												style={{
@@ -129,6 +147,7 @@ const CategoryModal = ({
 													setShowForm(false);
 												}}
 											/>,
+											// For deleting category
 											<CloseOutlined
 												className="actions"
 												style={{ color: "red" }}
@@ -138,6 +157,7 @@ const CategoryModal = ({
 											/>,
 									  ]
 									: [
+											// For modifying category
 											<EditOutlined
 												className="actions"
 												style={{
@@ -159,6 +179,7 @@ const CategoryModal = ({
 													setShowForm(false);
 												}}
 											/>,
+											// Tell users about the function of todo-type category
 											<Tooltip
 												title="Items of this category will be auto generated
                                                  on the next journal page if not marked as complete"
@@ -193,6 +214,7 @@ const CategoryModal = ({
 		);
 	};
 
+	// Generates the form
 	const generateForm = () => {
 		return (
 			<Form form={form} id="form">
@@ -219,7 +241,7 @@ const CategoryModal = ({
 												}}
 												placement="topLeft"
 												title={
-													"To type emojis press " +
+													"To type emoji press " +
 													generateTip()
 												}
 											>
@@ -252,6 +274,7 @@ const CategoryModal = ({
 								/>
 							</Form.Item>
 						</Col>
+						{/* A confirm button for the form */}
 						<Col>
 							<Button
 								id="form-confirm"
@@ -271,6 +294,7 @@ const CategoryModal = ({
 								icon={<CheckOutlined />}
 							/>
 						</Col>
+						{/* A cancel button for the form */}
 						<Col>
 							<Button
 								id="form-cancel"
@@ -314,6 +338,7 @@ const CategoryModal = ({
 				{showForm ? (
 					generateForm()
 				) : (
+					// A button to add new category
 					<Button
 						style={{ marginTop: "0.5em" }}
 						shape="circle"

@@ -6,12 +6,12 @@ import CategoryModal from "./categoryModal";
 import "../../css/journal/inputField.css";
 
 const InputField = ({ onSubmit }) => {
-	// Sets the state for the input, I might need a reducer
+	// Keeps track of the index of the currently selected category
 	let [categoryIndex, setCategoryIndex] = useState(0);
-	// let [addDate, setAddDate] = useState(false);
+	// Keeps track of whether the categoryModal should be visible
 	let [modalVisible, setModalVisible] = useState(false);
-
 	// This is the list of LIST categories users can create. Later on this will be fetched from user data
+	// The isTodo property is used to determine if the category needs to be auto gened on next page
 	let [categories, setCategories] = useState([
 		{ category: "Todo", emoji: "✅", isTodo: true },
 		{ category: "Thought", emoji: "🤓", isTodo: false },
@@ -23,8 +23,10 @@ const InputField = ({ onSubmit }) => {
 		},
 		{ category: "Misc.", emoji: "📌", isTodo: false },
 	]);
+	// Ant-Design Syntax
 	const [form] = Form.useForm();
 
+	// Resets form
 	const onReset = () => {
 		form.resetFields();
 	};
@@ -76,6 +78,7 @@ const InputField = ({ onSubmit }) => {
 		</Card>
 	);
 
+	// This is the content of addonBefore of the input field
 	const listCategory = (
 		<Popover
 			content={popContent}
