@@ -25,14 +25,17 @@ import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
 import moment from "moment";
 
 const Journal = ({ currentDate, onRedirect }) => {
+	// This is the data that will be rendered as a list on the page
 	let [list, setList] = useState({ data: [], loading: true });
+	// This keeps track of the server status, help with conditional rendering different situations
 	let [serverStatus, setServerStatus] = useState(500);
-
 	// this temp array is to store the newly created list items that have yet to send to DB
 	// and will be cleared as soon as the items are successfully sent
+	// This will be moved to localStorage along with data from CategoryModal
 	let [temp, setTemp] = useState([]);
-
-	const key = "save";
+	// This is the message key
+	const messageKey = "save";
+	// This is a ref for the timer used to auto retry saving
 	let saveRef = useRef({ time: 5, timer: null, timeout: null });
 
 	// This is be used to fetch user list from database
@@ -66,7 +69,11 @@ const Journal = ({ currentDate, onRedirect }) => {
 		if (temp.length !== 0) {
 			let json = JSON.stringify(temp);
 			const postData = async () => {
-				message.loading({ content: "Saving...", duration: 0, key });
+				message.loading({
+					content: "Saving...",
+					duration: 0,
+					messageKey,
+				});
 				let response;
 				try {
 					response = await fetch("http://localhost:8000/api/", {
@@ -83,8 +90,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 					message.success({
 						content: "Journal Saved!",
 						duration: 3,
-						key,
+						messageKey,
 					});
+					// Reset the retry time to 5 sec
 					saveRef.current.time = 5;
 					setTemp([]);
 				} else {
@@ -94,6 +102,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 						clearTimeout(saveRef.current.timeout);
 					}
 					let tic = saveRef.current.time;
+					// Increase retry time
 					saveRef.current.time = Math.floor(tic * 1.5);
 					saveRef.current.timer = setInterval(() => {
 						message.warning({
@@ -102,10 +111,11 @@ const Journal = ({ currentDate, onRedirect }) => {
 								tic +
 								" seconds...",
 							duration: 0,
-							key,
+							messageKey,
 						});
 						tic--;
 					}, 1000);
+					// Set up retry
 					saveRef.current.timeout = setTimeout(() => {
 						let refresh = [...temp];
 						setTemp(refresh);
@@ -122,6 +132,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 	// This renders the header of the journal page
 	const renderHeader = () => (
 		<Row align="middle">
+			{/* This is the "previous day" button, will be changed to previous journal */}
 			<Col span={5}>
 				<Button
 					id="header-button-left"
@@ -134,11 +145,14 @@ const Journal = ({ currentDate, onRedirect }) => {
 					Prev
 				</Button>
 			</Col>
+			{/* Shows journal date */}
 			<Col span={14}>
 				<Typography.Title id="date">
 					{currentDate.format("ddd MMM. DD, yyyy")}
 				</Typography.Title>
 			</Col>
+			{/* This is the "next day" button, will be changed to next journal
+				This will only show when it has a next day to go to  */}
 			<Col span={5}>
 				{moment().isSameOrBefore(currentDate, "day") ? null : (
 					<Button
@@ -155,6 +169,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 		</Row>
 	);
 
+	// This is the actions of the list items
 	const listAction = (item, index) => {
 		return (
 			<Menu>
@@ -185,11 +200,10 @@ const Journal = ({ currentDate, onRedirect }) => {
 						{item.crossed ? (
 							<div>Revert</div>
 						) : (
-							<div>Cross-out</div>
+							<div>Cross out</div>
 						)}
 					</Menu.Item>
 				)}
-
 				<Menu.Item
 					key={"2"}
 					onClick={() => {
