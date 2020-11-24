@@ -18,13 +18,13 @@ const Sidebar = ({ currentDate }) => {
 		<Sider id="sidebar">
 			<Menu mode="inline" theme="dark" selectedKeys={[]}>
 				<Menu.Item key="journal">
-					<Link to={"/" + dateLink}>
+					<Link to={"/user/" + dateLink}>
 						<BookOutlined />
 						Journal
 					</Link>
 				</Menu.Item>
 				<Menu.Item key="calendar">
-					<Link to="/calendar">
+					<Link to="/user/calendar">
 						<CalendarOutlined />
 						Calendar
 					</Link>

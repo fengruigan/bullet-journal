@@ -14,6 +14,7 @@ class APP extends Component {
 	state = {
 		// currentDate will keep track of the date state of the whole APP for use in Sidebar and Calendar
 		currentDate: moment(),
+		// will need a state for currentUser
 	};
 
 	// This function is called when the date state is changed. Called from MyCalendar
@@ -44,7 +45,7 @@ class APP extends Component {
 						<Sidebar currentDate={this.state.currentDate} />
 						<Content style={{ padding: 24 }}>
 							<Switch>
-								<Route path="/calendar">
+								<Route path="/:user/calendar">
 									<MyCalendar
 										resetDate={this.resetDate}
 										currentDate={this.state.currentDate}
@@ -52,7 +53,7 @@ class APP extends Component {
 									/>
 								</Route>
 								<Route
-									path="/:date"
+									path="/:user/:date"
 									// render={(props) => <Journal {...props} />}
 									render={() => (
 										<Journal
@@ -63,6 +64,7 @@ class APP extends Component {
 								/>
 								<Route
 									path="/"
+									// This will be the landing page
 									// render={(props) => <Journal {...props} />}
 									render={() => (
 										<Journal

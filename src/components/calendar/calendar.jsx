@@ -128,7 +128,7 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 	return (
 		<Fragment>
 			{/* Page will redirect if redirect is true */}
-			{redirect && <Redirect to={"/" + redirectTarget} />}
+			{redirect && <Redirect to={"/user/" + redirectTarget} />}
 			<Calendar
 				disabledDate={(date) => {
 					if (moment().isSameOrAfter(date, "day")) return false;
