@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "./inputField";
 import Emoji from "../emoji";
 import {
@@ -14,7 +14,6 @@ import {
 	Col,
 	Row,
 	Typography,
-	message,
 	Dropdown,
 	Menu,
 } from "antd";
@@ -24,19 +23,11 @@ import { ReactComponent as EmptyCurrent } from "../../custom/icons/empty_current
 import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
 import moment from "moment";
 
-const Journal = ({ currentDate, onRedirect }) => {
+const Journal = ({ currentDate, onRedirect, setSaving }) => {
 	// This is the data that will be rendered as a list on the page
 	let [list, setList] = useState({ data: [], loading: true });
 	// This keeps track of the server status, help with conditional rendering different situations
 	let [serverStatus, setServerStatus] = useState(500);
-	// this temp array is to store the newly created list items that have yet to send to DB
-	// and will be cleared as soon as the items are successfully sent
-	// This will be moved to localStorage along with data from CategoryModal
-	let [temp, setTemp] = useState([]);
-	// This is the message key
-	const messageKey = "save";
-	// This is a ref for the timer used to auto retry saving
-	let saveRef = useRef({ time: 5, timer: null, timeout: null });
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
@@ -45,7 +36,9 @@ const Journal = ({ currentDate, onRedirect }) => {
 			let urlDate = currentDate.format("yyyy-MM-DD");
 			let response;
 			try {
-				response = await fetch("http://localhost:8000/api/" + urlDate);
+				response = await fetch(
+					"http://localhost:8000/api/user/" + urlDate
+				);
 			} catch {
 				response = null;
 				setServerStatus(504); // Marking connection error
@@ -64,112 +57,31 @@ const Journal = ({ currentDate, onRedirect }) => {
 		fetchData();
 	}, [currentDate]);
 
-	// This is used to post new list item to database
-	useEffect(() => {
-		if (temp.length !== 0) {
-			let json = JSON.stringify(temp);
-			const postData = async () => {
-				message.loading({
-					content: "Saving...",
-					duration: 0,
-					messageKey,
-				});
-				let response;
-				try {
-					response = await fetch("http://localhost:8000/api/", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: json,
-					});
-				} catch {
-					response = null;
-				}
-				if (response && response.ok) {
-					message.success({
-						content: "Journal Saved!",
-						duration: 3,
-						messageKey,
-					});
-					// Reset the retry time to 5 sec
-					saveRef.current.time = 5;
-					setTemp([]);
-				} else {
-					// wait for some amount of time then retry
-					if (saveRef.current.timer) {
-						clearInterval(saveRef.current.timer);
-						clearTimeout(saveRef.current.timeout);
-					}
-					let tic = saveRef.current.time;
-					// Increase retry time
-					saveRef.current.time = Math.floor(tic * 1.5);
-					saveRef.current.timer = setInterval(() => {
-						message.warning({
-							content:
-								"Saving failed. Retrying in " +
-								tic +
-								" seconds...",
-							duration: 0,
-							messageKey,
-						});
-						tic--;
-					}, 1000);
-					// Set up retry
-					saveRef.current.timeout = setTimeout(() => {
-						let refresh = [...temp];
-						setTemp(refresh);
-						clearInterval(saveRef.current.timer);
-						saveRef.current.timer = null;
-						saveRef.current.timeout = null;
-					}, (tic + 1) * 1000);
-				}
-			};
-			postData();
-		}
-	}, [temp, setTemp]);
+	// This function creates new list item from input field
+	const onCreate = (item) => {
+		// update page
+		let newList = [...list.data, item];
+		setList({ data: newList, loading: false });
 
-	// This renders the header of the journal page
-	const renderHeader = () => (
-		<Row align="middle">
-			{/* This is the "previous day" button, will be changed to previous journal */}
-			<Col span={5}>
-				<Button
-					id="header-button-left"
-					onClick={() => {
-						let target = currentDate.subtract(1, "day");
-						onRedirect(target.clone());
-					}}
-				>
-					<LeftOutlined />
-					Prev
-				</Button>
-			</Col>
-			{/* Shows journal date */}
-			<Col span={14}>
-				<Typography.Title id="date">
-					{currentDate.format("ddd MMM. DD, yyyy")}
-				</Typography.Title>
-			</Col>
-			{/* This is the "next day" button, will be changed to next journal
-				This will only show when it has a next day to go to  */}
-			<Col span={5}>
-				{moment().isSameOrBefore(currentDate, "day") ? null : (
-					<Button
-						id="header-button-right"
-						onClick={() => {
-							let target = currentDate.add(1, "day");
-							onRedirect(target.clone());
-						}}
-					>
-						Next <RightOutlined />
-					</Button>
-				)}
-			</Col>
-		</Row>
-	);
+		// store to localStorage
+		let postItem = {
+			action: "POST",
+			user: "user",
+			contentType: "journal",
+			data: { ...item },
+		};
+		postItem.data.date = currentDate.format("yyyy-MM-DD");
+		let storage = localStorage.journalTemp
+			? JSON.parse(localStorage.journalTemp)
+			: [];
+		let newJournalTemp = [...storage, postItem];
+		localStorage.setItem("journalTemp", JSON.stringify(newJournalTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
+	};
 
 	// This is the actions of the list items
+	// This also need to post to database
 	const listAction = (item, index) => {
 		return (
 			<Menu>
@@ -220,6 +132,48 @@ const Journal = ({ currentDate, onRedirect }) => {
 		);
 	};
 
+	// This renders the header of the journal page
+	const renderHeader = () => {
+		return (
+			<Row align="middle">
+				{/* This is the "previous day" button, will be changed to previous journal */}
+				<Col span={5}>
+					<Button
+						id="header-button-left"
+						onClick={() => {
+							let target = currentDate.subtract(1, "day");
+							onRedirect(target.clone());
+						}}
+					>
+						<LeftOutlined />
+						Prev
+					</Button>
+				</Col>
+				{/* Shows journal date */}
+				<Col span={14}>
+					<Typography.Title id="date">
+						{currentDate.format("ddd MMM. DD, yyyy")}
+					</Typography.Title>
+				</Col>
+				{/* This is the "next day" button, will be changed to next journal
+					This will only show when it has a next day to go to  */}
+				<Col span={5}>
+					{moment().isSameOrBefore(currentDate, "day") ? null : (
+						<Button
+							id="header-button-right"
+							onClick={() => {
+								let target = currentDate.add(1, "day");
+								onRedirect(target.clone());
+							}}
+						>
+							Next <RightOutlined />
+						</Button>
+					)}
+				</Col>
+			</Row>
+		);
+	};
+
 	// takes data and renders the list
 	const generateList = () => {
 		if (list.data === null || list.data.length === 0) {
@@ -261,14 +215,21 @@ const Journal = ({ currentDate, onRedirect }) => {
 					renderItem={(item, index) => (
 						<List.Item
 							key={index}
-							actions={[
-								<Dropdown
-									overlay={listAction(item, index)}
-									trigger="click"
-								>
-									<EllipsisOutlined />
-								</Dropdown>,
-							]}
+							actions={
+								moment().isSame(currentDate, "day")
+									? [
+											<Dropdown
+												overlay={listAction(
+													item,
+													index
+												)}
+												trigger="click"
+											>
+												<EllipsisOutlined />
+											</Dropdown>,
+									  ]
+									: null
+							}
 						>
 							<List.Item.Meta
 								avatar={<Emoji symbol={item.category} />}
@@ -291,17 +252,6 @@ const Journal = ({ currentDate, onRedirect }) => {
 		}
 	};
 
-	// This function creates new list item from input field
-	const addToList = (item) => {
-		let postItem = { ...item };
-		postItem.date = currentDate.format("yyyy-MM-DD");
-		let newList = [...list.data, item];
-		let newTemp = [...temp, postItem];
-		setList({ data: newList, loading: false });
-		setTemp(newTemp);
-		saveRef.current.time = 5;
-	};
-
 	return (
 		<div className="journal">
 			{renderHeader()}
@@ -316,7 +266,7 @@ const Journal = ({ currentDate, onRedirect }) => {
 
 			{/* This may be renamed into something else */}
 			{moment().isSame(currentDate, "day") ? (
-				<InputField onSubmit={addToList} />
+				<InputField onSubmit={onCreate} setSaving={setSaving} />
 			) : null}
 		</div>
 	);

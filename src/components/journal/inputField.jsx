@@ -5,7 +5,7 @@ import Emoji from "../emoji";
 import CategoryModal from "./categoryModal";
 import "../../css/journal/inputField.css";
 
-const InputField = ({ onSubmit }) => {
+const InputField = ({ onSubmit, setSaving }) => {
 	// Keeps track of the index of the currently selected category
 	let [categoryIndex, setCategoryIndex] = useState(0);
 	// Keeps track of whether the categoryModal should be visible
@@ -23,6 +23,7 @@ const InputField = ({ onSubmit }) => {
 		},
 		{ category: "Misc.", emoji: "📌", isTodo: false },
 	]);
+
 	// Ant-Design Syntax
 	const [form] = Form.useForm();
 
@@ -87,7 +88,12 @@ const InputField = ({ onSubmit }) => {
 			arrowPointAtCenter
 		>
 			<span style={{ fontSize: "1.5em" }}>
-				<Emoji symbol={categories[categoryIndex].emoji} />
+				{/* This is to special handle the case when categories is empty */}
+				{categories[categoryIndex] ? (
+					<Emoji symbol={categories[categoryIndex].emoji} />
+				) : (
+					<Emoji symbol={"⚙️"} />
+				)}
 			</span>
 		</Popover>
 	);
@@ -99,6 +105,7 @@ const InputField = ({ onSubmit }) => {
 				form={form}
 				onFinish={(values) => {
 					let listItem = { ...values };
+					// Need to special handle the case when categories is empty
 					listItem.category = categories[categoryIndex].emoji;
 					categories[categoryIndex].isTodo
 						? (listItem.completed = false)
@@ -146,6 +153,7 @@ const InputField = ({ onSubmit }) => {
 
 			{/* Modal for customizing list category */}
 			<CategoryModal
+				setSaving={setSaving}
 				visible={modalVisible}
 				setModalVisible={setModalVisible}
 				categories={categories}

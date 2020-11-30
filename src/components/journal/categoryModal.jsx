@@ -22,6 +22,7 @@ const CategoryModal = ({
 	setModalVisible,
 	categories,
 	setCategories,
+	setSaving,
 }) => {
 	// This keeps track of where the form will be placed
 	let [formIndex, setFormIndex] = useState(-1);
@@ -76,31 +77,76 @@ const CategoryModal = ({
 
 	// Delete the category based on index
 	const removeCategory = (index) => {
+		// update setting
 		let cat = [...categories].filter((el, idx) => {
 			return idx === index ? null : el;
 		});
 		setCategories(cat);
+		// store to localStorage
+		let storage = localStorage.categoryTemp
+			? JSON.parse(localStorage.categoryTemp)
+			: [];
+		let postItem = {
+			action: "DELETE",
+			target: index,
+			user: "user",
+			contentType: "category",
+		};
+		let newCategoryTemp = [...storage, postItem];
+		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
 	};
 
 	// Modifies the categories list
 	const onModify = (index, value) => {
+		// update setting
 		let cat = [...categories];
 		value.isTodo = false;
 		cat[index] = value;
-		// post value to db
 		setCategories(cat);
 		setFormIndex(-1);
 		onReset();
+		// store to localStorage
+		let storage = localStorage.categoryTemp
+			? JSON.parse(localStorage.categoryTemp)
+			: [];
+		let postItem = {
+			action: "PUT",
+			target: index,
+			user: "user",
+			contentType: "category",
+			data: { ...value },
+		};
+		let newCategoryTemp = [...storage, postItem];
+		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
 	};
 
 	// Create new category in categories list
 	const onCreate = (value) => {
-		// post value to db
+		// update setting
 		let cat = [...categories];
 		value.isTodo = false;
 		cat.push(value);
 		setCategories(cat);
+		setFormIndex(-1);
 		onReset();
+		// store to localStorage
+		let storage = localStorage.categoryTemp
+			? JSON.parse(localStorage.categoryTemp)
+			: [];
+		let postItem = {
+			action: "POST",
+			user: "user",
+			contentType: "category",
+			data: { ...value },
+		};
+		let newCategoryTemp = [...storage, postItem];
+		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
 	};
 
 	// Closes category modal

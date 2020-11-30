@@ -1,85 +1,97 @@
 import { Layout } from "antd";
 import moment from "moment";
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import MyCalendar from "./components/calendar/calendar";
 import Journal from "./components/journal/journal";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
 import "./css/App.css";
+import useSaveManager from "./util/useSaveManager";
 
 const { Content } = Layout;
 
-class APP extends Component {
-	state = {
-		// currentDate will keep track of the date state of the whole APP for use in Sidebar and Calendar
-		currentDate: moment(),
-		// will need a state for currentUser
-	};
+const APP = () => {
+	// currentDate will keep track of the date state of the whole APP for use in Sidebar and Calendar
+	let [currentDate, setCurrentDate] = useState(moment());
+
+	useEffect(() => {
+		// initialize localStorage
+		localStorage.setItem("journalTemp", JSON.stringify([]));
+		localStorage.setItem("categoryTemp", JSON.stringify([]));
+		localStorage.setItem("saveTime", 5);
+		localStorage.setItem("saveTimer", null);
+		localStorage.setItem("saveTimeout", null);
+	}, []);
+
+	let [setSaving] = useSaveManager();
+	// will need a state for currentUser, maybe a context
 
 	// This function is called when the date state is changed. Called from MyCalendar
-	onDateChange = (selectedDate) => {
-		this.setState({ currentDate: selectedDate });
+	const onDateChange = (selectedDate) => {
+		setCurrentDate(selectedDate);
 	};
 
 	// This function is called when date state is reset. Called from MyCalendar and Navbar
-	resetDate = () => {
-		this.setState({ currentDate: moment() });
+	const resetDate = () => {
+		setCurrentDate(moment());
 	};
 
-	render() {
-		return (
-			<Router>
+	return (
+		<Router>
+			<Layout>
+				<Navbar
+					collapsed={false}
+					resetDate={resetDate}
+					currentDate={currentDate}
+				/>
+				<Navbar
+					collapsed={true}
+					resetDate={resetDate}
+					currentDate={currentDate}
+				/>
 				<Layout>
-					<Navbar
-						collapsed={false}
-						resetDate={this.resetDate}
-						currentDate={this.state.currentDate}
-					/>
-					<Navbar
-						collapsed={true}
-						resetDate={this.resetDate}
-						currentDate={this.state.currentDate}
-					/>
-					<Layout>
-						<Sidebar currentDate={this.state.currentDate} />
-						<Content style={{ padding: 24 }}>
-							<Switch>
-								<Route path="/:user/calendar">
-									<MyCalendar
-										resetDate={this.resetDate}
-										currentDate={this.state.currentDate}
-										onRedirect={this.onDateChange}
+					<Sidebar currentDate={currentDate} />
+					<Content style={{ padding: 24 }}>
+						<Switch>
+							<Route path="/:user/calendar">
+								<MyCalendar
+									resetDate={resetDate}
+									currentDate={currentDate}
+									onRedirect={onDateChange}
+								/>
+							</Route>
+							<Route
+								path="/:user/:date"
+								// render={(props) => <Journal {...props} />}
+								render={() => (
+									<Journal
+										// saving={saving}
+										setSaving={setSaving}
+										currentDate={currentDate}
+										onRedirect={onDateChange}
 									/>
-								</Route>
-								<Route
-									path="/:user/:date"
-									// render={(props) => <Journal {...props} />}
-									render={() => (
-										<Journal
-											currentDate={this.state.currentDate}
-											onRedirect={this.onDateChange}
-										/>
-									)}
-								/>
-								<Route
-									path="/"
-									// This will be the landing page
-									// render={(props) => <Journal {...props} />}
-									render={() => (
-										<Journal
-											currentDate={this.state.currentDate}
-											onRedirect={this.onDateChange}
-										/>
-									)}
-								/>
-							</Switch>
-						</Content>
-					</Layout>
+								)}
+							/>
+							<Route
+								path="/"
+								// This will be the landing page
+								// render={(props) => <Journal {...props} />}
+								render={() => (
+									<Journal
+										// saving={saving}
+										setSaving={setSaving}
+										currentDate={currentDate}
+										onRedirect={onDateChange}
+									/>
+								)}
+							/>
+						</Switch>
+					</Content>
 				</Layout>
-			</Router>
-		);
-	}
-}
+			</Layout>
+		</Router>
+	);
+};
 
 export default APP;
