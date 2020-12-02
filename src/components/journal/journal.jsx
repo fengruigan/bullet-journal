@@ -37,7 +37,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			let response;
 			try {
 				response = await fetch(
-					"http://localhost:8000/api/user/" + urlDate
+					"http://localhost:8000/api/user/journals/" + urlDate
 				);
 			} catch {
 				response = null;
@@ -57,6 +57,17 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 		fetchData();
 	}, [currentDate]);
 
+	const setLocalStorage = (postItem) => {
+		postItem.data.date = currentDate.format("yyyy-MM-DD");
+		let storage = localStorage.journalTemp
+			? JSON.parse(localStorage.journalTemp)
+			: [];
+		let newJournalTemp = [...storage, postItem];
+		localStorage.setItem("journalTemp", JSON.stringify(newJournalTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
+	};
+
 	// This function creates new list item from input field
 	const onCreate = (item) => {
 		// update page
@@ -70,14 +81,44 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			contentType: "journal",
 			data: { ...item },
 		};
-		postItem.data.date = currentDate.format("yyyy-MM-DD");
-		let storage = localStorage.journalTemp
-			? JSON.parse(localStorage.journalTemp)
-			: [];
-		let newJournalTemp = [...storage, postItem];
-		localStorage.setItem("journalTemp", JSON.stringify(newJournalTemp));
-		setSaving(true);
-		localStorage.setItem("saveTime", 5);
+		setLocalStorage(postItem);
+	};
+
+	const onModify = (index, item) => {
+		// update page
+		let lst = [...list.data];
+		item.hasOwnProperty("completed")
+			? (lst[index].completed = !lst[index].completed)
+			: (lst[index].crossed = !lst[index].crossed);
+		setList({ data: lst, loading: false });
+
+		// push to local storage
+		let postItem = {
+			action: "PUT",
+			target: index,
+			user: "user",
+			contentType: "journal",
+			data: { ...lst[index] },
+		};
+		setLocalStorage(postItem);
+	};
+
+	const onDelete = (index) => {
+		// update page
+		let lst = [...list.data].filter((el, idx) => {
+			return idx === index ? null : el;
+		});
+		setList({ data: lst, loading: false });
+
+		// push to localStorage
+		let postItem = {
+			action: "DELETE",
+			target: index,
+			user: "user",
+			contentType: "journal",
+			data: {},
+		};
+		setLocalStorage(postItem);
 	};
 
 	// This is the actions of the list items
@@ -89,9 +130,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 					<Menu.Item
 						key={"1"}
 						onClick={() => {
-							let lst = [...list.data];
-							lst[index].completed = !lst[index].completed;
-							setList({ data: lst, loading: false });
+							onModify(index, item);
 						}}
 					>
 						{item.completed ? (
@@ -104,9 +143,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 					<Menu.Item
 						key={"1"}
 						onClick={() => {
-							let lst = [...list.data];
-							lst[index].crossed = !lst[index].crossed;
-							setList({ data: lst, loading: false });
+							onModify(index, item);
 						}}
 					>
 						{item.crossed ? (
@@ -119,11 +156,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 				<Menu.Item
 					key={"2"}
 					onClick={() => {
-						console.log("deleting " + index);
-						let lst = [...list.data].filter((el, idx) => {
-							return idx === index ? null : el;
-						});
-						setList({ data: lst, loading: false });
+						onDelete(index);
 					}}
 				>
 					<div>Delete</div>

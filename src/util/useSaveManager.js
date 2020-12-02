@@ -8,15 +8,20 @@ export default function useSaveManager() {
 	const messageKey = "save";
 
 	// handle fetch
-	const postData = async (dataToPost, action, user) => {
+	const postData = async (dataToPost, action, user, type) => {
 		message.loading({
 			content: "Saving......Please do not refresh the page",
 			duration: 0,
 			key: messageKey,
 		});
+
+		let url = "http://localhost:8000/api/" + user;
+		if (type === "journal") url += "/journals";
+		else if (type === "category") url += "/settings";
+
 		let response;
 		try {
-			response = await fetch("http://localhost:8000/api/" + user, {
+			response = await fetch(url, {
 				method: action,
 				headers: {
 					"Content-Type": "application/json",
@@ -47,52 +52,77 @@ export default function useSaveManager() {
 	};
 
 	useEffect(() => {
+		const post = async (type) => {
+			let storage = JSON.parse(localStorage.getItem(type + "Temp"));
+			while (storage.length !== 0) {
+				let [action, user] = prepPost(storage[0]);
+				let success = await postData(
+					JSON.stringify(storage[0]),
+					action,
+					user,
+					type
+				);
+				if (success) {
+					storage.shift();
+					localStorage.setItem(
+						type + "Temp",
+						JSON.stringify(storage)
+					);
+				} else {
+					break;
+				}
+			}
+		};
+
 		// save function
 		const save = async () => {
-			let storage = null;
 			// scan localStorage.journalTemp
 			if (localStorage.journalTemp.length !== 0) {
 				// first parse localStorage
-				storage = JSON.parse(localStorage.journalTemp);
-				while (storage.length !== 0) {
-					let [action, user] = prepPost(storage[0]);
-					let success = await postData(
-						JSON.stringify(storage[0]),
-						action,
-						user
-					);
-					if (success) {
-						storage.shift();
-						localStorage.setItem(
-							"journalTemp",
-							JSON.stringify(storage)
-						);
-					} else {
-						break;
-					}
-				}
+				// let storage = JSON.parse(localStorage.journalTemp);
+				// while (storage.length !== 0) {
+				// 	let [action, user, type] = prepPost(storage[0]);
+				// 	let success = await postData(
+				// 		JSON.stringify(storage[0]),
+				// 		action,
+				// 		user,
+				// 		type
+				// 	);
+				// 	if (success) {
+				// 		storage.shift();
+				// 		localStorage.setItem(
+				// 			"journalTemp",
+				// 			JSON.stringify(storage)
+				// 		);
+				// 	} else {
+				// 		break;
+				// 	}
+				// }
+				await post("journal");
 			}
 			// scan localStorage.categoryTemp
 			if (localStorage.categoryTemp.length !== 0) {
 				// first parse localStorage
-				storage = JSON.parse(localStorage.categoryTemp);
-				while (storage.length !== 0) {
-					let [action, user] = prepPost(storage[0]);
-					let success = await postData(
-						JSON.stringify(storage[0]),
-						action,
-						user
-					);
-					if (success) {
-						storage.shift();
-						localStorage.setItem(
-							"categoryTemp",
-							JSON.stringify(storage)
-						);
-					} else {
-						break;
-					}
-				}
+				// let storage = JSON.parse(localStorage.categoryTemp);
+				// while (storage.length !== 0) {
+				// 	let [action, user, type] = prepPost(storage[0]);
+				// 	let success = await postData(
+				// 		JSON.stringify(storage[0]),
+				// 		action,
+				// 		user,
+				// 		type
+				// 	);
+				// 	if (success) {
+				// 		storage.shift();
+				// 		localStorage.setItem(
+				// 			"categoryTemp",
+				// 			JSON.stringify(storage)
+				// 		);
+				// 	} else {
+				// 		break;
+				// 	}
+				// }
+				await post("category");
 			}
 			setSaving(false);
 		};
@@ -132,8 +162,6 @@ export default function useSaveManager() {
 				localStorage.setItem("saveTimer", timer);
 				// Set up retry
 				let timeout = setTimeout(() => {
-					console.log(timeout);
-					console.log("timeout activated");
 					setSaving(true);
 					clearInterval(localStorage.saveTimer);
 					localStorage.setItem("saveTimer", null);
