@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import { Modal, Col, Row, Form, Input, Tooltip, List, Button } from "antd";
 import {
 	QuestionCircleOutlined,
@@ -13,6 +13,7 @@ import emojiRegex from "emoji-regex/RGI_Emoji";
 import Emoji from "../emoji";
 import "../../css/journal/categoryModal.css";
 import detectMobile from "../../util/detectMobile";
+import { UserContext } from "../../contexts/UserContext";
 
 // This is used to match emojis
 const regex = emojiRegex();
@@ -32,6 +33,8 @@ const CategoryModal = ({
 	const [form] = Form.useForm();
 	// Used in handleEmojiChange
 	let emojiRef = useRef("");
+
+	let { user, setUser } = useContext(UserContext);
 
 	// Resets form
 	const onReset = () => {

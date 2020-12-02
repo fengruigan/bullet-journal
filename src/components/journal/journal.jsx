@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import InputField from "./inputField";
 import Emoji from "../emoji";
 import {
@@ -22,12 +22,15 @@ import { ReactComponent as NetwrokError } from "../../custom/icons/network_error
 import { ReactComponent as EmptyCurrent } from "../../custom/icons/empty_current.svg";
 import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
 import moment from "moment";
+import { UserContext } from "../../contexts/UserContext";
 
 const Journal = ({ currentDate, onRedirect, setSaving }) => {
 	// This is the data that will be rendered as a list on the page
 	let [list, setList] = useState({ data: [], loading: true });
 	// This keeps track of the server status, help with conditional rendering different situations
 	let [serverStatus, setServerStatus] = useState(500);
+
+	let { user } = useContext(UserContext);
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
@@ -37,7 +40,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			let response;
 			try {
 				response = await fetch(
-					"http://localhost:8000/api/user/journals/" + urlDate
+					`http://localhost:8000/api/${user.username}/journals/${urlDate}`
 				);
 			} catch {
 				response = null;
@@ -55,7 +58,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			setList({ data: json, loading: false });
 		};
 		fetchData();
-	}, [currentDate]);
+	}, [currentDate, user]);
 
 	const setLocalStorage = (postItem) => {
 		postItem.data.date = currentDate.format("yyyy-MM-DD");
