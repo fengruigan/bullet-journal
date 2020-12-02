@@ -18,13 +18,7 @@ import { UserContext } from "../../contexts/UserContext";
 // This is used to match emojis
 const regex = emojiRegex();
 
-const CategoryModal = ({
-	visible,
-	setModalVisible,
-	categories,
-	setCategories,
-	setSaving,
-}) => {
+const CategoryModal = ({ visible, setModalVisible, setSaving }) => {
 	// This keeps track of where the form will be placed
 	let [formIndex, setFormIndex] = useState(-1);
 	// Determines wheter or not to show the form
@@ -35,6 +29,7 @@ const CategoryModal = ({
 	let emojiRef = useRef("");
 
 	let { user, setUser } = useContext(UserContext);
+	let categories = user ? user.settings.categories : [];
 
 	// Resets form
 	const onReset = () => {
@@ -78,27 +73,40 @@ const CategoryModal = ({
 			: "window key + period";
 	};
 
+	const setCategories = (categories) => {
+		let currentUser = { ...user };
+		currentUser.settings.categories = categories;
+		setUser(currentUser);
+	};
+
+	const setLocalStorage = (postItem) => {
+		let storage = localStorage.categoryTemp
+			? JSON.parse(localStorage.categoryTemp)
+			: [];
+		let newCategoryTemp = [...storage, postItem];
+		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
+		setSaving(true);
+		localStorage.setItem("saveTime", 5);
+	};
+
 	// Delete the category based on index
 	const removeCategory = (index) => {
 		// update setting
 		let cat = [...categories].filter((el, idx) => {
 			return idx === index ? null : el;
 		});
+
+		// update user setting
 		setCategories(cat);
+
 		// store to localStorage
-		let storage = localStorage.categoryTemp
-			? JSON.parse(localStorage.categoryTemp)
-			: [];
 		let postItem = {
 			action: "DELETE",
 			target: index,
 			user: "user",
 			contentType: "category",
 		};
-		let newCategoryTemp = [...storage, postItem];
-		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
-		setSaving(true);
-		localStorage.setItem("saveTime", 5);
+		setLocalStorage(postItem);
 	};
 
 	// Modifies the categories list
@@ -107,13 +115,13 @@ const CategoryModal = ({
 		let cat = [...categories];
 		value.isTodo = false;
 		cat[index] = value;
-		setCategories(cat);
 		setFormIndex(-1);
 		onReset();
+
+		// update user setting
+		setCategories(cat);
+
 		// store to localStorage
-		let storage = localStorage.categoryTemp
-			? JSON.parse(localStorage.categoryTemp)
-			: [];
 		let postItem = {
 			action: "PUT",
 			target: index,
@@ -121,10 +129,7 @@ const CategoryModal = ({
 			contentType: "category",
 			data: { ...value },
 		};
-		let newCategoryTemp = [...storage, postItem];
-		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
-		setSaving(true);
-		localStorage.setItem("saveTime", 5);
+		setLocalStorage(postItem);
 	};
 
 	// Create new category in categories list
@@ -133,28 +138,24 @@ const CategoryModal = ({
 		let cat = [...categories];
 		value.isTodo = false;
 		cat.push(value);
-		setCategories(cat);
 		setFormIndex(-1);
 		onReset();
+
+		// update user setting
+		setCategories(cat);
+
 		// store to localStorage
-		let storage = localStorage.categoryTemp
-			? JSON.parse(localStorage.categoryTemp)
-			: [];
 		let postItem = {
 			action: "POST",
 			user: "user",
 			contentType: "category",
 			data: { ...value },
 		};
-		let newCategoryTemp = [...storage, postItem];
-		localStorage.setItem("categoryTemp", JSON.stringify(newCategoryTemp));
-		setSaving(true);
-		localStorage.setItem("saveTime", 5);
+		setLocalStorage(postItem);
 	};
 
 	// Closes category modal
 	const closeModal = () => {
-		onReset();
 		setFormIndex(-1);
 		setShowForm(false);
 		setModalVisible(false);

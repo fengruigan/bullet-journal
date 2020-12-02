@@ -1,28 +1,21 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useContext } from "react";
 import { SettingOutlined } from "@ant-design/icons";
 import { Input, Popover, Card, Tooltip, Form, Row, Col, Button } from "antd";
 import Emoji from "../emoji";
 import CategoryModal from "./categoryModal";
 import "../../css/journal/inputField.css";
+import { UserContext } from "../../contexts/UserContext";
 
 const InputField = ({ onSubmit, setSaving }) => {
 	// Keeps track of the index of the currently selected category
 	let [categoryIndex, setCategoryIndex] = useState(0);
 	// Keeps track of whether the categoryModal should be visible
 	let [modalVisible, setModalVisible] = useState(false);
-	// This is the list of LIST categories users can create. Later on this will be fetched from user data
+
+	let { user } = useContext(UserContext);
+	// This is the list of LIST categories users can create.
 	// The isTodo property is used to determine if the category needs to be auto gened on next page
-	let [categories, setCategories] = useState([
-		{ category: "Todo", emoji: "✅", isTodo: true },
-		{ category: "Thought", emoji: "🤓", isTodo: false },
-		{ category: "Note", emoji: "✏️", isTodo: false },
-		{
-			category: "Miscellaneous",
-			emoji: "🧸",
-			isTodo: false,
-		},
-		{ category: "Misc.", emoji: "📌", isTodo: false },
-	]);
+	let categories = user ? user.settings.categories : [];
 
 	// Ant-Design Syntax
 	const [form] = Form.useForm();
@@ -156,8 +149,8 @@ const InputField = ({ onSubmit, setSaving }) => {
 				setSaving={setSaving}
 				visible={modalVisible}
 				setModalVisible={setModalVisible}
-				categories={categories}
-				setCategories={setCategories}
+				// categories={categories}
+				// setCategories={setCategories}
 			/>
 		</Fragment>
 	);
