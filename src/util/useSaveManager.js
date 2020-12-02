@@ -78,50 +78,10 @@ export default function useSaveManager() {
 		const save = async () => {
 			// scan localStorage.journalTemp
 			if (localStorage.journalTemp.length !== 0) {
-				// first parse localStorage
-				// let storage = JSON.parse(localStorage.journalTemp);
-				// while (storage.length !== 0) {
-				// 	let [action, user, type] = prepPost(storage[0]);
-				// 	let success = await postData(
-				// 		JSON.stringify(storage[0]),
-				// 		action,
-				// 		user,
-				// 		type
-				// 	);
-				// 	if (success) {
-				// 		storage.shift();
-				// 		localStorage.setItem(
-				// 			"journalTemp",
-				// 			JSON.stringify(storage)
-				// 		);
-				// 	} else {
-				// 		break;
-				// 	}
-				// }
 				await post("journal");
 			}
 			// scan localStorage.categoryTemp
 			if (localStorage.categoryTemp.length !== 0) {
-				// first parse localStorage
-				// let storage = JSON.parse(localStorage.categoryTemp);
-				// while (storage.length !== 0) {
-				// 	let [action, user, type] = prepPost(storage[0]);
-				// 	let success = await postData(
-				// 		JSON.stringify(storage[0]),
-				// 		action,
-				// 		user,
-				// 		type
-				// 	);
-				// 	if (success) {
-				// 		storage.shift();
-				// 		localStorage.setItem(
-				// 			"categoryTemp",
-				// 			JSON.stringify(storage)
-				// 		);
-				// 	} else {
-				// 		break;
-				// 	}
-				// }
 				await post("category");
 			}
 			setSaving(false);
