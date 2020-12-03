@@ -113,7 +113,7 @@ const CategoryModal = ({ visible, setModalVisible, setSaving }) => {
 	const onModify = (index, value) => {
 		// update setting
 		let cat = [...categories];
-		value.isTodo = false;
+		value.isTodo = categories[index].isTodo;
 		cat[index] = value;
 		setFormIndex(-1);
 		onReset();
