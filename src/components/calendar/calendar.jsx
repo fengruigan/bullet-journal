@@ -1,8 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useContext } from "react";
 import { Calendar, Select, Col, Row, Radio, Button } from "antd";
 import { Redirect } from "react-router-dom";
 import { ReloadOutlined } from "@ant-design/icons";
 import moment from "moment";
+import { UserContext } from "../../contexts/UserContext";
 
 const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 	// This is a wrapper for ant design Calendar component.
@@ -20,6 +21,18 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 	// redirectTarget tracks the redirect target date to use in url
 	// Defaulting to redirect to "/calendar"
 	let [redirectTarget, setRedirectTarget] = useState("calendar");
+
+	let { user } = useContext(UserContext);
+
+	// Checks if anyone is logged in
+	let [redirectToLanding, setRedirectToLanding] = useState(false);
+
+	useEffect(() => {
+		// if no user is logged in, redirect to landing page to log in
+		if (user === null) {
+			setRedirectToLanding(true);
+		}
+	}, [user]);
 
 	// useEffect sets the date to be the date state passed from App component.
 	// whenever dateFromProps is changed.
@@ -127,6 +140,7 @@ const MyCalendar = ({ currentDate, resetDate, onRedirect }) => {
 
 	return (
 		<Fragment>
+			{redirectToLanding ? <Redirect to="/" /> : null}
 			{/* Page will redirect if redirect is true */}
 			{redirect && <Redirect to={"/user/" + redirectTarget} />}
 			<Calendar

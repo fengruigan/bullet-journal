@@ -9,7 +9,7 @@ import Sidebar from "./components/sidebar";
 import "./css/App.css";
 import useSaveManager from "./util/useSaveManager";
 import { UserContext } from "./contexts/UserContext";
-import { login } from "./util/userLogin";
+import LandingPage from "./components/landingPage";
 
 const { Content } = Layout;
 
@@ -25,10 +25,6 @@ const APP = () => {
 	}, [user, setUser]);
 
 	useEffect(() => {
-		const userLogin = async () => {
-			let loggedIn = await login(apiUrl, "user");
-			setUser(loggedIn);
-		};
 		// initialize localStorage
 		localStorage.setItem("journalTemp", JSON.stringify([]));
 		localStorage.setItem("categoryTemp", JSON.stringify([]));
@@ -36,7 +32,6 @@ const APP = () => {
 		localStorage.setItem("saveTimer", null);
 		localStorage.setItem("saveTimeout", null);
 		// This will be moved to login page
-		userLogin();
 	}, []);
 
 	let [setSaving] = useSaveManager(apiUrl);
@@ -55,21 +50,26 @@ const APP = () => {
 	return (
 		<UserContext.Provider value={signedInUser}>
 			<Router>
-				<Layout>
-					<Navbar
-						collapsed={false}
-						resetDate={resetDate}
-						currentDate={currentDate}
-					/>
-					<Navbar
-						collapsed={true}
-						resetDate={resetDate}
-						currentDate={currentDate}
+				<Switch>
+					<Route
+						path="/"
+						exact
+						render={() => <LandingPage apiUrl={apiUrl} />}
 					/>
 					<Layout>
-						<Sidebar currentDate={currentDate} />
-						<Content style={{ padding: 24 }}>
-							<Switch>
+						<Navbar
+							collapsed={false}
+							resetDate={resetDate}
+							currentDate={currentDate}
+						/>
+						<Navbar
+							collapsed={true}
+							resetDate={resetDate}
+							currentDate={currentDate}
+						/>
+						<Layout>
+							<Sidebar currentDate={currentDate} />
+							<Content style={{ padding: 24 }}>
 								<Route path="/:user/calendar">
 									<MyCalendar
 										resetDate={resetDate}
@@ -89,7 +89,7 @@ const APP = () => {
 										/>
 									)}
 								/>
-								<Route
+								{/* <Route
 									path="/"
 									// This will be the landing page
 									// render={(props) => <Journal {...props} />}
@@ -101,11 +101,11 @@ const APP = () => {
 											onRedirect={onDateChange}
 										/>
 									)}
-								/>
-							</Switch>
-						</Content>
+								/> */}
+							</Content>
+						</Layout>
 					</Layout>
-				</Layout>
+				</Switch>
 			</Router>
 		</UserContext.Provider>
 	);

@@ -103,7 +103,7 @@ const CategoryModal = ({ visible, setModalVisible, setSaving }) => {
 		let postItem = {
 			action: "DELETE",
 			target: index,
-			user: "user",
+			user: user.username,
 			contentType: "category",
 		};
 		setLocalStorage(postItem);
@@ -125,7 +125,7 @@ const CategoryModal = ({ visible, setModalVisible, setSaving }) => {
 		let postItem = {
 			action: "PUT",
 			target: index,
-			user: "user",
+			user: user.username,
 			contentType: "category",
 			data: { ...value },
 		};
@@ -147,7 +147,7 @@ const CategoryModal = ({ visible, setModalVisible, setSaving }) => {
 		// store to localStorage
 		let postItem = {
 			action: "POST",
-			user: "user",
+			user: user.username,
 			contentType: "category",
 			data: { ...value },
 		};

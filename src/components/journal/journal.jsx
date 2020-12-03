@@ -17,12 +17,13 @@ import {
 	Dropdown,
 	Menu,
 } from "antd";
-import "../../css/journal/journal.css";
+import { Redirect } from "react-router-dom";
 import { ReactComponent as NetwrokError } from "../../custom/icons/network_error.svg";
 import { ReactComponent as EmptyCurrent } from "../../custom/icons/empty_current.svg";
 import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
-import moment from "moment";
 import { UserContext } from "../../contexts/UserContext";
+import moment from "moment";
+import "../../css/journal/journal.css";
 
 const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 	// This is the data that will be rendered as a list on the page
@@ -31,6 +32,16 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 	let [serverStatus, setServerStatus] = useState(500);
 
 	let { user } = useContext(UserContext);
+
+	// Checks if anyone is logged in
+	let [redirectToLanding, setRedirectToLanding] = useState(false);
+
+	useEffect(() => {
+		// if no user is logged in, redirect to landing page to log in
+		if (user === null) {
+			setRedirectToLanding(true);
+		}
+	}, [user]);
 
 	// This is be used to fetch user list from database
 	useEffect(() => {
@@ -80,7 +91,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 		// store to localStorage
 		let postItem = {
 			action: "POST",
-			user: "user",
+			user: user.username,
 			contentType: "journal",
 			data: { ...item },
 		};
@@ -99,7 +110,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 		let postItem = {
 			action: "PUT",
 			target: index,
-			user: "user",
+			user: user.username,
 			contentType: "journal",
 			data: { ...lst[index] },
 		};
@@ -117,7 +128,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 		let postItem = {
 			action: "DELETE",
 			target: index,
-			user: "user",
+			user: user.username,
 			contentType: "journal",
 			data: {},
 		};
@@ -290,6 +301,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 
 	return (
 		<div className="journal">
+			{redirectToLanding ? <Redirect to="/" /> : null}
 			{renderHeader()}
 			<hr className="wide-divider" />
 			<div id="list">
