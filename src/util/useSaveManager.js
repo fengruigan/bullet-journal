@@ -1,47 +1,11 @@
 import { useEffect, useState } from "react";
 import { message } from "antd";
 
-export default function useSaveManager() {
+export default function useSaveManager(apiUrl) {
 	let [saving, setSaving] = useState(false);
 
 	// This is the message key
 	const messageKey = "save";
-
-	// handle fetch
-	const postData = async (dataToPost, action, user, type) => {
-		message.loading({
-			content: "Saving......Please do not refresh the page",
-			duration: 0,
-			key: messageKey,
-		});
-
-		let url = "http://localhost:8000/api/" + user;
-		if (type === "journal") url += "/journals";
-		else if (type === "category") url += "/settings";
-
-		let response;
-		try {
-			response = await fetch(url, {
-				method: action,
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: dataToPost,
-			});
-		} catch {
-			response = null;
-		}
-		if (response && response.ok) {
-			message.success({
-				content: "Save successful!",
-				duration: 3,
-				key: messageKey,
-			});
-			return true;
-		} else {
-			return false;
-		}
-	};
 
 	const prepPost = (el) => {
 		let action = el.action;
@@ -52,6 +16,42 @@ export default function useSaveManager() {
 	};
 
 	useEffect(() => {
+		// handle fetch
+		const postData = async (dataToPost, action, user, type) => {
+			message.loading({
+				content: "Saving......Please do not refresh the page",
+				duration: 0,
+				key: messageKey,
+			});
+
+			let url = apiUrl + user;
+			if (type === "journal") url += "/journals";
+			else if (type === "category") url += "/settings";
+
+			let response;
+			try {
+				response = await fetch(url, {
+					method: action,
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: dataToPost,
+				});
+			} catch {
+				response = null;
+			}
+			if (response && response.ok) {
+				message.success({
+					content: "Save successful!",
+					duration: 3,
+					key: messageKey,
+				});
+				return true;
+			} else {
+				return false;
+			}
+		};
+
 		const post = async (type) => {
 			let storage = JSON.parse(localStorage.getItem(type + "Temp"));
 			while (storage.length !== 0) {
@@ -130,7 +130,7 @@ export default function useSaveManager() {
 				localStorage.setItem("saveTimeout", timeout);
 			}
 		}
-	}, [saving, setSaving]);
+	}, [apiUrl, saving, setSaving]);
 
 	return [setSaving];
 }

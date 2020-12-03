@@ -18,13 +18,15 @@ const APP = () => {
 	let [currentDate, setCurrentDate] = useState(moment());
 	let [user, setUser] = useState(null);
 
+	const apiUrl = "http://localhost:8000/api/";
+
 	let signedInUser = useMemo(() => {
 		return { user, setUser };
 	}, [user, setUser]);
 
 	useEffect(() => {
 		const userLogin = async () => {
-			let loggedIn = await login();
+			let loggedIn = await login(apiUrl, "user");
 			setUser(loggedIn);
 		};
 		// initialize localStorage
@@ -37,7 +39,7 @@ const APP = () => {
 		userLogin();
 	}, []);
 
-	let [setSaving] = useSaveManager();
+	let [setSaving] = useSaveManager(apiUrl);
 	// will need a state for currentUser, maybe a context
 
 	// This function is called when the date state is changed. Called from MyCalendar
@@ -80,7 +82,7 @@ const APP = () => {
 									// render={(props) => <Journal {...props} />}
 									render={() => (
 										<Journal
-											// saving={saving}
+											apiUrl={apiUrl}
 											setSaving={setSaving}
 											currentDate={currentDate}
 											onRedirect={onDateChange}
@@ -93,7 +95,7 @@ const APP = () => {
 									// render={(props) => <Journal {...props} />}
 									render={() => (
 										<Journal
-											// saving={saving}
+											apiUrl={apiUrl}
 											setSaving={setSaving}
 											currentDate={currentDate}
 											onRedirect={onDateChange}

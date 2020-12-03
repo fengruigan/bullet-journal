@@ -1,38 +1,11 @@
-export const login = async () => {
+export const login = async (apiUrl, username) => {
 	// fetch from db
-	return {
-		username: "user",
-		nickname: "user",
-		journals: "test",
-		lastActive: "some date",
-		settings: {
-			categories: [
-				{
-					category: "Todo",
-					emoji: "✅",
-					isTodo: true,
-				},
-				{
-					category: "Thought",
-					emoji: "🤓",
-					isTodo: false,
-				},
-				{
-					category: "Note",
-					emoji: "✏️",
-					isTodo: false,
-				},
-				{
-					category: "Miscellaneous",
-					emoji: "🧸",
-					isTodo: false,
-				},
-				{
-					category: "Misc.",
-					emoji: "📌",
-					isTodo: false,
-				},
-			],
-		},
-	};
+	let signedInUser;
+	try {
+		let response = await fetch(apiUrl + username);
+		signedInUser = await response.json();
+	} catch {
+		signedInUser = null;
+	}
+	return signedInUser;
 };

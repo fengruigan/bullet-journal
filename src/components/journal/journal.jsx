@@ -24,7 +24,7 @@ import { ReactComponent as EmptyPast } from "../../custom/icons/empty_past.svg";
 import moment from "moment";
 import { UserContext } from "../../contexts/UserContext";
 
-const Journal = ({ currentDate, onRedirect, setSaving }) => {
+const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 	// This is the data that will be rendered as a list on the page
 	let [list, setList] = useState({ data: [], loading: true });
 	// This keeps track of the server status, help with conditional rendering different situations
@@ -40,7 +40,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			let response;
 			try {
 				response = await fetch(
-					`http://localhost:8000/api/${user.username}/journals/${urlDate}`
+					`${apiUrl}${user.username}/journals/${urlDate}`
 				);
 			} catch {
 				response = null;
@@ -58,7 +58,7 @@ const Journal = ({ currentDate, onRedirect, setSaving }) => {
 			setList({ data: json, loading: false });
 		};
 		fetchData();
-	}, [currentDate, user]);
+	}, [apiUrl, currentDate, user]);
 
 	const setLocalStorage = (postItem) => {
 		postItem.data.date = currentDate.format("yyyy-MM-DD");
