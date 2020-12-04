@@ -30,6 +30,10 @@
 	text-decoration: line-through;
 }
 
+.list-action-icons {
+	font-size: 1.1em;
+}
+
 .ant-list-item-meta-description {
 	color: black;
 }
