@@ -6,6 +6,11 @@ import {
 	LeftOutlined,
 	RightOutlined,
 	EllipsisOutlined,
+	CloseOutlined,
+	CheckCircleTwoTone,
+	ExclamationCircleTwoTone,
+	RollbackOutlined,
+	StrikethroughOutlined,
 } from "@ant-design/icons";
 import {
 	Empty,
@@ -146,12 +151,21 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 						onClick={() => {
 							onModify(index, item);
 						}}
+						icon={
+							item.completed ? (
+								<ExclamationCircleTwoTone
+									className="list-action-icons"
+									twoToneColor="orange"
+								/>
+							) : (
+								<CheckCircleTwoTone
+									className="list-action-icons"
+									twoToneColor="#52c41a"
+								/>
+							)
+						}
 					>
-						{item.completed ? (
-							<div>Incomplete</div>
-						) : (
-							<div>Completed</div>
-						)}
+						{item.completed ? "Mark Incomplete" : "Mark Complete"}
 					</Menu.Item>
 				) : (
 					<Menu.Item
@@ -159,12 +173,15 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 						onClick={() => {
 							onModify(index, item);
 						}}
+						icon={
+							item.crossed ? (
+								<RollbackOutlined className="list-action-icons" />
+							) : (
+								<StrikethroughOutlined className="list-action-icons" />
+							)
+						}
 					>
-						{item.crossed ? (
-							<div>Revert</div>
-						) : (
-							<div>Cross out</div>
-						)}
+						{item.crossed ? "Revert" : "Cross out"}
 					</Menu.Item>
 				)}
 				<Menu.Item
@@ -172,8 +189,14 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 					onClick={() => {
 						onDelete(index);
 					}}
+					icon={
+						<CloseOutlined
+							className="list-action-icons"
+							style={{ color: "red" }}
+						/>
+					}
 				>
-					<div>Delete</div>
+					Delete
 				</Menu.Item>
 			</Menu>
 		);
@@ -272,7 +295,9 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 												)}
 												trigger="click"
 											>
-												<EllipsisOutlined />
+												<EllipsisOutlined
+													style={{ color: "black" }}
+												/>
 											</Dropdown>,
 									  ]
 									: null
