@@ -1,66 +1,46 @@
 import React, { useContext, useState } from "react";
-import { Button } from "antd";
-import { login } from "../util/userLogin";
-import { UserContext } from "../contexts/UserContext";
 import { Redirect } from "react-router-dom";
-import moment from "moment";
+import { Button } from "antd";
+import { UserContext } from "../contexts/UserContext";
 
-const LandingPage = ({ apiUrl }) => {
-	let { user, setUser } = useContext(UserContext);
-	let [redirecting, setRedirecting] = useState(false);
-
-	const userLogin = async (username) => {
-		let loggedIn = await login(apiUrl, username);
-		setUser(loggedIn);
-		setRedirecting(true);
-	};
+const LandingPage = () => {
+	let { user } = useContext(UserContext);
+	let [signIn, setSignIn] = useState(false);
+	let [signUp, setSignUp] = useState(false);
 
 	return (
 		<div
 			style={{
+				height: "100%",
 				width: "50%",
 				margin: "0 auto",
 				textAlign: "center",
 				paddingTop: "5rem",
 			}}
 		>
-			<h1>Mock Landing Page</h1>
-			{user ? (
-				<div>
+			<h1>Placeholder Landing Page</h1>
+			{user ? null : (
+				<React.Fragment>
 					<Button
 						type="primary"
 						onClick={() => {
-							setUser(null);
+							setSignIn(true);
 						}}
 					>
-						Logout
-					</Button>
-				</div>
-			) : (
-				<div>
-					<Button
-						type="primary"
-						onClick={async () => {
-							await userLogin("user");
-						}}
-					>
-						Login as user
+						Sign-In
 					</Button>
 					<Button
 						type="primary"
-						onClick={async () => {
-							await userLogin("tester");
+						onClick={() => {
+							setSignUp(true);
 						}}
 					>
-						Login as tester
-					</Button>{" "}
-				</div>
+						Sign-Up
+					</Button>
+				</React.Fragment>
 			)}
-			{redirecting ? (
-				<Redirect
-					to={`/${user.username}/${moment().format("yyyy-MM-DD")}`}
-				/>
-			) : null}
+			{signIn ? <Redirect to={"/sign-in"} /> : null}
+			{signUp ? <Redirect to={"/sign-up"} /> : null}
 		</div>
 	);
 };

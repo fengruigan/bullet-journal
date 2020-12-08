@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Layout, Menu, Dropdown } from "antd";
+import React, { useEffect, useState, useContext } from "react";
+import { Layout, Menu, Dropdown, message } from "antd";
 import Icon, {
 	UserOutlined,
 	UserAddOutlined,
@@ -7,9 +7,11 @@ import Icon, {
 	InfoCircleOutlined,
 	BookOutlined,
 	CalendarOutlined,
+	SmileTwoTone,
 } from "@ant-design/icons";
 import { ReactComponent as Logo } from "../custom/icons/logo.svg";
 import { Link } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
 
 const { Header } = Layout;
 
@@ -17,6 +19,17 @@ const { Header } = Layout;
 const Navbar = ({ currentDate, resetDate, collapsed }) => {
 	// dateLink is the redirect link which redirects to the correct journal page
 	let [dateLink, setDateLink] = useState("");
+
+	let { user, setUser } = useContext(UserContext);
+	let greeting = user
+		? `Hello, ${user.nickname}!`
+		: // : "Hi! Wait, you should sign in first you know.";
+		  "Hey there!";
+	let farewell = user
+		? `Goodbye, ${user.nickname}! Hope to see you again soon!`
+		: "Bye, Whoever you are!";
+
+	const messageKey = "userAuth";
 
 	// useEffect sets the dateLink whenever currentDate is changed
 	useEffect(() => {
@@ -36,25 +49,57 @@ const Navbar = ({ currentDate, resetDate, collapsed }) => {
 					display: "inline",
 					float: "right",
 				}}
+				selectedKeys={[]}
 			>
 				<Menu.Item
 					key="about"
-					icon={<InfoCircleOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<InfoCircleOutlined className="navbar-icons" />}
 				>
 					About
 				</Menu.Item>
-				<Menu.Item
-					key="sign-in"
-					icon={<UserOutlined style={{ fontsize: "1.2em" }} />}
-				>
-					Sign-In
-				</Menu.Item>
-				<Menu.Item
-					key="sign-up"
-					icon={<UserAddOutlined style={{ fontsize: "1.2em" }} />}
-				>
-					Sign-Up
-				</Menu.Item>
+
+				{user ? (
+					<Menu.Item
+						key="sign-out"
+						icon={<UserOutlined className="navbar-icons" />}
+						onClick={() => {
+							try {
+								setUser(null);
+								message.success({
+									content: farewell,
+									duration: 3,
+									key: messageKey,
+									icon: <SmileTwoTone />,
+								});
+							} catch {
+								message.info({
+									content: "Something went wrong",
+									duration: 2,
+									key: messageKey,
+									icon: <SmileTwoTone />,
+								});
+							}
+						}}
+					>
+						Sign-out
+					</Menu.Item>
+				) : (
+					<React.Fragment>
+						<Menu.Item
+							key="sign-in"
+							icon={<UserOutlined className="navbar-icons" />}
+						>
+							<Link to="/sign-in">Sign-In</Link>
+						</Menu.Item>
+
+						<Menu.Item
+							key="sign-up"
+							icon={<UserAddOutlined className="navbar-icons" />}
+						>
+							<Link to="/sign-up">Sign-Up</Link>
+						</Menu.Item>
+					</React.Fragment>
+				)}
 			</Menu>
 		);
 	};
@@ -72,33 +117,33 @@ const Navbar = ({ currentDate, resetDate, collapsed }) => {
 			>
 				<Menu.Item
 					key="about"
-					icon={<InfoCircleOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<InfoCircleOutlined className="navbar-icons" />}
 				>
 					About
 				</Menu.Item>
 				<Menu.Divider />
 				<Menu.Item
 					key="sign-in"
-					icon={<UserOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<UserOutlined className="navbar-icons" />}
 				>
 					Sign-In
 				</Menu.Item>
 				<Menu.Item
 					key="sign-up"
-					icon={<UserAddOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<UserAddOutlined className="navbar-icons" />}
 				>
 					Sign-Up
 				</Menu.Item>
 				<Menu.Divider />
 				<Menu.Item
 					key="journal"
-					icon={<BookOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<BookOutlined className="navbar-icons" />}
 				>
 					<Link to={"/" + dateLink}>Journal</Link>
 				</Menu.Item>
 				<Menu.Item
 					key="calendar"
-					icon={<CalendarOutlined style={{ fontsize: "1.2em" }} />}
+					icon={<CalendarOutlined className="navbar-icons" />}
 				>
 					<Link to="/calendar">Calendar</Link>
 				</Menu.Item>
@@ -112,7 +157,7 @@ const Navbar = ({ currentDate, resetDate, collapsed }) => {
 					onClick={(e) => e.preventDefault()}
 					style={{ float: "right", marginRight: "1rem" }}
 				>
-					<UnorderedListOutlined style={{ fontsize: "1.2em" }} /> Menu
+					<UnorderedListOutlined className="navbar-icons" /> Menu
 				</a>
 			</Dropdown>
 		);
@@ -138,6 +183,15 @@ const Navbar = ({ currentDate, resetDate, collapsed }) => {
 				</Link>
 			</div>
 			{collapsed ? renderDropdown() : renderMenu()}
+			<div
+				style={{
+					display: "inline",
+					float: "right",
+					marginRight: "1em",
+				}}
+			>
+				<SmileTwoTone className="navbar-icons" /> {" " + greeting}
+			</div>
 		</Header>
 	);
 };
