@@ -1,15 +1,17 @@
-import { Layout } from "antd";
-import moment from "moment";
 import React, { useState, useEffect, useMemo } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import MyCalendar from "./components/calendar/calendar";
-import Journal from "./components/journal/journal";
+import { Layout } from "antd";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
-import "./css/App.css";
+import LandingPage from "./components/landingPage";
+import SignInPage from "./components/signInPage";
+import SignUpPage from "./components/signUpPage";
+import MyCalendar from "./components/calendar/calendar";
+import Journal from "./components/journal/journal";
 import useSaveManager from "./util/useSaveManager";
 import { UserContext } from "./contexts/UserContext";
-import LandingPage from "./components/landingPage";
+import moment from "moment";
+import "./css/App.css";
 
 const { Content } = Layout;
 
@@ -31,7 +33,6 @@ const APP = () => {
 		localStorage.setItem("saveTime", 5);
 		localStorage.setItem("saveTimer", null);
 		localStorage.setItem("saveTimeout", null);
-		// This will be moved to login page
 	}, []);
 
 	let [setSaving] = useSaveManager(apiUrl);
@@ -50,62 +51,61 @@ const APP = () => {
 	return (
 		<UserContext.Provider value={signedInUser}>
 			<Router>
-				<Switch>
-					<Route
-						path="/"
-						exact
-						render={() => <LandingPage apiUrl={apiUrl} />}
+				<Layout>
+					<Navbar
+						collapsed={false}
+						resetDate={resetDate}
+						currentDate={currentDate}
 					/>
-					<Layout>
-						<Navbar
-							collapsed={false}
-							resetDate={resetDate}
-							currentDate={currentDate}
+					<Navbar
+						collapsed={true}
+						resetDate={resetDate}
+						currentDate={currentDate}
+					/>
+
+					<Switch>
+						<Route
+							path="/"
+							exact
+							render={() => <LandingPage apiUrl={apiUrl} />}
 						/>
-						<Navbar
-							collapsed={true}
-							resetDate={resetDate}
-							currentDate={currentDate}
-						/>
-						<Layout>
-							<Sidebar currentDate={currentDate} />
-							<Content style={{ padding: 24 }}>
-								<Route path="/:user/calendar">
+
+						<Route path="/sign-in">
+							<SignInPage apiUrl={apiUrl} />
+						</Route>
+
+						<Route path="/sign-up">
+							<SignUpPage apiUrl={apiUrl} />
+						</Route>
+
+						<Route path="/:user/calendar">
+							<Layout>
+								<Sidebar currentDate={currentDate} />
+								<Content style={{ padding: 24 }}>
 									<MyCalendar
 										resetDate={resetDate}
 										currentDate={currentDate}
 										onRedirect={onDateChange}
 									/>
-								</Route>
-								<Route
-									path="/:user/:date"
-									// render={(props) => <Journal {...props} />}
-									render={() => (
-										<Journal
-											apiUrl={apiUrl}
-											setSaving={setSaving}
-											currentDate={currentDate}
-											onRedirect={onDateChange}
-										/>
-									)}
-								/>
-								{/* <Route
-									path="/"
-									// This will be the landing page
-									// render={(props) => <Journal {...props} />}
-									render={() => (
-										<Journal
-											apiUrl={apiUrl}
-											setSaving={setSaving}
-											currentDate={currentDate}
-											onRedirect={onDateChange}
-										/>
-									)}
-								/> */}
-							</Content>
-						</Layout>
-					</Layout>
-				</Switch>
+								</Content>
+							</Layout>
+						</Route>
+
+						<Route path="/:user/:date">
+							<Layout>
+								<Sidebar currentDate={currentDate} />
+								<Content style={{ padding: 24 }}>
+									<Journal
+										apiUrl={apiUrl}
+										setSaving={setSaving}
+										currentDate={currentDate}
+										onRedirect={onDateChange}
+									/>
+								</Content>
+							</Layout>
+						</Route>
+					</Switch>
+				</Layout>
 			</Router>
 		</UserContext.Provider>
 	);
