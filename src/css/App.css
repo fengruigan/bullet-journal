@@ -16,6 +16,10 @@ a {
 	padding: 0;
 }
 
+.navbar-icons {
+	font-size: 1.2em;
+}
+
 #brand-logo a {
 	color: black;
 }
@@ -50,5 +54,12 @@ a {
 	}
 	.nav-collapse {
 		display: block;
+	}
+}
+
+@media (max-width: 600px) {
+	#brand-logo {
+		margin-left: 5px;
+		font-size: 1.7rem;
 	}
 }

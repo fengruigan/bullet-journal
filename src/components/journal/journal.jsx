@@ -60,7 +60,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 				);
 			} catch {
 				response = null;
-				setServerStatus(504); // Marking connection error
+				setServerStatus(500); // Marking connection error
 			}
 			if (response && response.status) {
 				setServerStatus(response.status);
@@ -247,7 +247,7 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 	// takes data and renders the list
 	const generateList = () => {
 		if (list.data === null || list.data.length === 0) {
-			if (serverStatus === 504) {
+			if (serverStatus === 500) {
 				return (
 					<Empty
 						className="empty"
@@ -256,14 +256,6 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 					/>
 				);
 			} else if (serverStatus === 404) {
-				return (
-					<Empty
-						className="empty"
-						image={<NetwrokError />}
-						description="Not found"
-					/>
-				);
-			} else {
 				return moment().isSame(currentDate, "day") ? (
 					<Empty
 						className="empty"
@@ -275,6 +267,19 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 						className="empty"
 						image={<EmptyPast />}
 						description="Nothing on the list for this date"
+					/>
+				);
+			} else {
+				return (
+					// <Empty
+					// 	className="empty"
+					// 	image={<NetwrokError />}
+					// 	description="Not found"
+					// />
+					<Empty
+						className="empty"
+						image={<EmptyCurrent />}
+						description="List is still empty. Write something below."
 					/>
 				);
 			}
@@ -308,9 +313,10 @@ const Journal = ({ apiUrl, currentDate, onRedirect, setSaving }) => {
 								description={
 									<div
 										className={
-											item.completed || item.crossed
+											"list-item " +
+											(item.completed || item.crossed
 												? "crossed-out"
-												: ""
+												: "")
 										}
 									>
 										{item.content}

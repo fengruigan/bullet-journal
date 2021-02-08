@@ -1,9 +1,11 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { Button, message, Form, Input } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import Icon, { LoadingOutlined } from "@ant-design/icons";
 import { login } from "../util/userLogin";
 import { UserContext } from "../contexts/UserContext";
+import { ReactComponent as Welcome } from "../custom/icons/welcome.svg";
+import { ReactComponent as PasswordFocus } from "../custom/icons/typing_password.svg";
 import moment from "moment";
 
 const layout = {
@@ -19,6 +21,7 @@ const SignInPage = ({ apiUrl }) => {
 	let [signedIn, setSignedIn] = useState(false);
 	let [signIn, setSignIn] = useState(false);
 	let [loading, setLoading] = useState(false);
+	let [passwordFocus, setPasswordFocus] = useState(false);
 
 	const messageKey = "userAuth";
 
@@ -123,6 +126,10 @@ const SignInPage = ({ apiUrl }) => {
 	const signUpForm = (
 		<React.Fragment>
 			<h1>Placeholder Sign-Up Page</h1>
+			<Icon
+				component={passwordFocus ? PasswordFocus : Welcome}
+				style={{ fontSize: "8em", marginBottom: "10px" }}
+			/>
 			<div>
 				Usernames cannot contain {",<.>/*?;:'\"[{]} `~+=_!@#$%^&()"}
 			</div>
@@ -174,7 +181,14 @@ const SignInPage = ({ apiUrl }) => {
 				>
 					{/* Potentially allow for autoComplete by adding property autoComplete="current-password"*/}
 					{/* Use autoComplete="new-password" for sign up */}
-					<Input.Password />
+					<Input.Password
+						onFocus={() => {
+							setPasswordFocus(true);
+						}}
+						onBlur={() => {
+							setPasswordFocus(false);
+						}}
+					/>
 				</Form.Item>
 
 				<Form.Item
@@ -191,7 +205,14 @@ const SignInPage = ({ apiUrl }) => {
 				>
 					{/* Potentially allow for autoComplete by adding property autoComplete="current-password"*/}
 					{/* Use autoComplete="new-password" for sign up */}
-					<Input.Password />
+					<Input.Password
+						onFocus={() => {
+							setPasswordFocus(true);
+						}}
+						onBlur={() => {
+							setPasswordFocus(false);
+						}}
+					/>
 				</Form.Item>
 				<Form.Item {...tailLayout}>
 					<Button disabled={loading} type="primary" htmlType="submit">
